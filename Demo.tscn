@@ -7,7 +7,7 @@
 [ext_resource path="res://noise.png" type="Texture" id=5]
 [ext_resource path="res://DrawTextureShader.shader" type="Shader" id=7]
 
-[sub_resource type="ViewportTexture" id=17]
+[sub_resource type="ViewportTexture" id=1]
 viewport_path = NodePath("LastFrameBuffer")
 
 [sub_resource type="ShaderMaterial" id=2]
@@ -19,32 +19,32 @@ shader_param/PI = 3.1416
 shader_param/RAYS_PER_PIXEL = 32.0
 shader_param/RESOLUTION = Vector2( 0, 0 )
 shader_param/frame = 0
-shader_param/last_frame_buffer = SubResource( 17 )
+shader_param/last_frame_buffer = SubResource( 1 )
 shader_param/noise_texture = ExtResource( 5 )
 
-[sub_resource type="ViewportTexture" id=18]
+[sub_resource type="ViewportTexture" id=3]
 viewport_path = NodePath("BackBuffer")
 
-[sub_resource type="ShaderMaterial" id=11]
+[sub_resource type="ShaderMaterial" id=4]
 resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource( 7 )
 shader_param/sRGB = false
 shader_param/min_alpha = 0.0
-shader_param/texture_to_draw = SubResource( 18 )
+shader_param/texture_to_draw = SubResource( 3 )
 
-[sub_resource type="ViewportTexture" id=16]
+[sub_resource type="ViewportTexture" id=5]
 viewport_path = NodePath("BackBuffer")
 
-[sub_resource type="ShaderMaterial" id=7]
+[sub_resource type="ShaderMaterial" id=6]
 resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource( 7 )
 shader_param/sRGB = true
 shader_param/min_alpha = 1.0
-shader_param/texture_to_draw = SubResource( 16 )
+shader_param/texture_to_draw = SubResource( 5 )
 
-[sub_resource type="ViewportTexture" id=12]
+[sub_resource type="ViewportTexture" id=7]
 viewport_path = NodePath("LastFrameBuffer")
 
 [node name="Demo" type="Node2D"]
@@ -54,7 +54,7 @@ script = ExtResource( 4 )
 material = SubResource( 2 )
 
 [node name="LastFrameBuffer" parent="." instance=ExtResource( 1 )]
-material = SubResource( 11 )
+material = SubResource( 4 )
 
 [node name="Light" type="Node2D" parent="."]
 position = Vector2( 64, 64 )
@@ -62,7 +62,7 @@ position = Vector2( 64, 64 )
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Screen" type="TextureRect" parent="CanvasLayer"]
-material = SubResource( 7 )
+material = SubResource( 6 )
 texture = ExtResource( 2 )
 expand = true
 __meta__ = {
@@ -82,8 +82,15 @@ __meta__ = {
 
 [node name="LastFrameBuffer" type="TextureRect" parent="DebugRTT"]
 visible = false
-texture = SubResource( 12 )
+texture = SubResource( 7 )
 expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="DebugRTT"]
+margin_right = 40.0
+margin_bottom = 14.0
 __meta__ = {
 "_edit_use_anchors_": false
 }

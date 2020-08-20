@@ -36,6 +36,10 @@ config/name="Godot 2D Global Illumination"
 run/main_scene="res://Demo.tscn"
 config/icon="res://icon.png"
 
+[display]
+
+window/vsync/use_vsync=false
+
 [input]
 
 ui_click={

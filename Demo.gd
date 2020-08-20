@@ -39,5 +39,7 @@ func _process(delta):
 	
 	$BackBuffer.set_shader_param("frame", _frame)
 	_frame += 1
+	
+	$DebugRTT/Label.text = String(Engine.get_frames_per_second())
 
 """ PUBLIC """
