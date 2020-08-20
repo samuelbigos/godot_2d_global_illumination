@@ -1,11 +1,16 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://RenderTarget.tscn" type="PackedScene" id=1]
 [ext_resource path="res://1px.png" type="Texture" id=2]
-[ext_resource path="res://GI.shader" type="Shader" id=3]
+[ext_resource path="res://shaders/GI.shader" type="Shader" id=3]
 [ext_resource path="res://Demo.gd" type="Script" id=4]
 [ext_resource path="res://noise.png" type="Texture" id=5]
-[ext_resource path="res://DrawTextureShader.shader" type="Shader" id=7]
+[ext_resource path="res://assets/circle.png" type="Texture" id=6]
+[ext_resource path="res://shaders/DrawTextureShader.shader" type="Shader" id=7]
+[ext_resource path="res://assets/square.png" type="Texture" id=8]
+[ext_resource path="res://assets/arch.png" type="Texture" id=9]
+[ext_resource path="res://shaders/DistanceTexture.shader" type="Shader" id=10]
+[ext_resource path="res://shaders/Voronoi.shader" type="Shader" id=11]
 
 [sub_resource type="ViewportTexture" id=1]
 viewport_path = NodePath("LastFrameBuffer")
@@ -33,8 +38,8 @@ shader_param/sRGB = false
 shader_param/min_alpha = 0.0
 shader_param/texture_to_draw = SubResource( 3 )
 
-[sub_resource type="ViewportTexture" id=5]
-viewport_path = NodePath("BackBuffer")
+[sub_resource type="ViewportTexture" id=11]
+viewport_path = NodePath("VoronoiBuffer")
 
 [sub_resource type="ShaderMaterial" id=6]
 resource_local_to_scene = true
@@ -42,10 +47,16 @@ render_priority = 1
 shader = ExtResource( 7 )
 shader_param/sRGB = true
 shader_param/min_alpha = 1.0
-shader_param/texture_to_draw = SubResource( 5 )
+shader_param/texture_to_draw = SubResource( 11 )
 
 [sub_resource type="ViewportTexture" id=7]
 viewport_path = NodePath("LastFrameBuffer")
+
+[sub_resource type="ShaderMaterial" id=14]
+shader = ExtResource( 10 )
+
+[sub_resource type="ShaderMaterial" id=13]
+shader = ExtResource( 11 )
 
 [node name="Demo" type="Node2D"]
 script = ExtResource( 4 )
@@ -62,6 +73,7 @@ position = Vector2( 64, 64 )
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Screen" type="TextureRect" parent="CanvasLayer"]
+visible = false
 material = SubResource( 6 )
 texture = ExtResource( 2 )
 expand = true
@@ -94,3 +106,93 @@ margin_bottom = 14.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="VPC" type="ViewportContainer" parent="."]
+material = SubResource( 14 )
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DistanceBuffer" type="Viewport" parent="VPC"]
+
+[node name="VPC" type="ViewportContainer" parent="VPC/DistanceBuffer"]
+material = SubResource( 13 )
+margin_right = 640.0
+margin_bottom = 360.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VoronoiBuffer" type="Viewport" parent="VPC/DistanceBuffer/VPC"]
+size = Vector2( 640, 360 )
+handle_input_locally = false
+hdr = false
+render_target_update_mode = 3
+
+[node name="MainScene" type="Node2D" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer"]
+
+[node name="circle" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+modulate = Color( 0.545098, 0.0862745, 0.8, 1 )
+position = Vector2( 280.68, 36.1233 )
+texture = ExtResource( 6 )
+
+[node name="square" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+modulate = Color( 0.921569, 1, 0, 1 )
+position = Vector2( 136.39, 280.355 )
+texture = ExtResource( 8 )
+
+[node name="square4" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+position = Vector2( 694.727, 320.615 )
+texture = ExtResource( 8 )
+
+[node name="circle2" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+position = Vector2( 305.801, 184.556 )
+texture = ExtResource( 6 )
+
+[node name="circle4" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+position = Vector2( 847.187, 206.805 )
+texture = ExtResource( 6 )
+
+[node name="circle5" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+modulate = Color( 0, 0.670588, 1, 1 )
+position = Vector2( 877.911, 432.47 )
+texture = ExtResource( 6 )
+
+[node name="arch" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+modulate = Color( 1, 0, 0.960784, 1 )
+position = Vector2( 435.546, 249.688 )
+rotation = 1.77675
+texture = ExtResource( 9 )
+
+[node name="arch4" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+modulate = Color( 1, 0, 0.960784, 1 )
+position = Vector2( 634.725, 459.462 )
+rotation = 1.77675
+texture = ExtResource( 9 )
+
+[node name="arch2" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+position = Vector2( 445.522, 79.0962 )
+texture = ExtResource( 9 )
+
+[node name="square2" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+modulate = Color( 0.568627, 0.501961, 0.501961, 1 )
+position = Vector2( 210.194, 134.992 )
+rotation = -1.01578
+texture = ExtResource( 8 )
+
+[node name="square3" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+modulate = Color( 0.568627, 0.501961, 0.501961, 1 )
+position = Vector2( 655.168, 146.646 )
+rotation = -1.01578
+texture = ExtResource( 8 )
+
+[node name="circle3" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+position = Vector2( 285.838, 332.863 )
+texture = ExtResource( 6 )
+
+[node name="arch3" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+position = Vector2( 59.3749, 115.432 )
+rotation = -0.747001
+texture = ExtResource( 9 )

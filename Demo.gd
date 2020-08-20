@@ -27,6 +27,9 @@ func _ready():
 	$DebugRTT/LastFrameBG.rect_size = get_viewport().size * 0.5
 	$DebugRTT/LastFrameBuffer.rect_size = get_viewport().size * 0.5
 	
+	$VPC/DistanceBuffer.set_size(get_viewport().size)
+	$VPC/DistanceBuffer/VPC/VoronoiBuffer.set_size(get_viewport().size)
+	
 	$BackBuffer.set_shader_param("RESOLUTION", get_viewport().size)
 
 func _process(delta):
