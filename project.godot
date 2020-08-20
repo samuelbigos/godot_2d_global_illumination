@@ -8,23 +8,33 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Node2D",
+"class": "Demo",
+"language": "GDScript",
+"path": "res://Demo.gd"
+}, {
+"base": "Viewport",
+"class": "RenderTarget",
+"language": "GDScript",
+"path": "res://RenderTarget.gd"
+}, {
+"base": "Node",
+"class": "XXX",
+"language": "GDScript",
+"path": "res://SourceTemplate.gd"
+} ]
 _global_script_class_icons={
-
+"Demo": "",
+"RenderTarget": "",
+"XXX": ""
 }
 
 [application]
 
-config/name="2D Illumination"
+config/name="Godot 2D Global Illumination"
 run/main_scene="res://Demo.tscn"
 config/icon="res://icon.png"
-
-[display]
-
-window/size/width=640
-window/size/height=360
-window/size/test_width=640
-window/size/test_height=360
 
 [input]
 

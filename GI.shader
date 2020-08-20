@@ -36,7 +36,7 @@ highp float box5(vec2 uv) { return sd_box(uv - vec2(1.75,-0.3), vec2(0.05,1.3));
 highp float box6(vec2 uv) { return sd_box(uv - vec2(0,1), vec2(1.7,0.05)); }
 highp float box7(vec2 uv) { return sd_box(uv - vec2(0,-1), vec2(1.7,0.05)); }
 highp float box8(vec2 uv) { return sd_box(uv - vec2(-1.75,-0.3), vec2(0.05,1.3)); }
-highp float light_dist(vec2 uv) { return sd_sphere(LIGHT_POS/RESOLUTION.xy + uv, 0.1); }
+highp float light_dist(vec2 uv) { return sd_sphere(LIGHT_POS + uv, 0.05); }
 
 int get_material(vec2 uv)
 {
@@ -111,7 +111,7 @@ void fragment()
 		0.0, 
 		0.0, 
 		0.0,
-		4.0,
+		2.0,
 		0.0,
 		0.0,
 		0.0,
@@ -131,9 +131,7 @@ void fragment()
 		vec3(1.0, 1.0, 1.0)
 	);
 	
-	vec2 uv = FRAGCOORD.xy/RESOLUTION.xy;
-    uv = uv * 2.0 - 1.0;
-	
+	vec2 uv = UV;	
 	float aspect = RESOLUTION.x / RESOLUTION.y;
     float invAspect = RESOLUTION.y / RESOLUTION.x;
     uv.x *= aspect;
@@ -159,8 +157,7 @@ void fragment()
 			vec3 mat_colour = surfaces_colour[mat];
 			float d = max(dist, 0.0);
 			vec2 st = hit_pos;
-            st.x *=  invAspect;
-            st = (st + 1.0)*0.5;
+            st.x *= invAspect;
 			
 			highp float last_emission = 0.0;
 			if(mat_emissive <= epsilon())
@@ -173,7 +170,7 @@ void fragment()
 			float emission = mat_emissive + last_emission;
             float r = 2.;
             float att = pow(max(1.0 - (d*d)/(r*r),0.),2.);
-            emis += emission*att;
+            emis += emission * att;
             col += (mat_emissive + last_emission)*mat_colour*att;
 		}
 	}

@@ -1,13 +1,14 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=14 format=2]
 
-[ext_resource path="res://noise.png" type="Texture" id=1]
+[ext_resource path="res://RenderTarget.tscn" type="PackedScene" id=1]
 [ext_resource path="res://1px.png" type="Texture" id=2]
-[ext_resource path="res://Demo.shader" type="Shader" id=3]
+[ext_resource path="res://GI.shader" type="Shader" id=3]
 [ext_resource path="res://Demo.gd" type="Script" id=4]
-[ext_resource path="res://clear.png" type="Texture" id=5]
+[ext_resource path="res://noise.png" type="Texture" id=5]
+[ext_resource path="res://DrawTextureShader.shader" type="Shader" id=7]
 
-[sub_resource type="ViewportTexture" id=1]
-viewport_path = NodePath("BackBuffer")
+[sub_resource type="ViewportTexture" id=17]
+viewport_path = NodePath("LastFrameBuffer")
 
 [sub_resource type="ShaderMaterial" id=2]
 resource_local_to_scene = true
@@ -16,110 +17,44 @@ shader = ExtResource( 3 )
 shader_param/LIGHT_POS = Vector2( 0, 0 )
 shader_param/PI = 3.1416
 shader_param/RAYS_PER_PIXEL = 32.0
-shader_param/RESOLUTION = Vector2( 640, 360 )
+shader_param/RESOLUTION = Vector2( 0, 0 )
 shader_param/frame = 0
-shader_param/last_frame_buffer = SubResource( 1 )
-shader_param/noise_texture = ExtResource( 1 )
+shader_param/last_frame_buffer = SubResource( 17 )
+shader_param/noise_texture = ExtResource( 5 )
 
-[sub_resource type="Shader" id=3]
-code = "shader_type canvas_item;
-render_mode skip_vertex_transform;
+[sub_resource type="ViewportTexture" id=18]
+viewport_path = NodePath("BackBuffer")
 
-uniform highp sampler2D demo_texture;
-
-void fragment() 
-{
-	COLOR = vec4(texture(demo_texture, UV));
-}"
-custom_defines = ""
-
-[sub_resource type="ViewportTexture" id=4]
-viewport_path = NodePath("Viewport")
-
-[sub_resource type="ShaderMaterial" id=5]
+[sub_resource type="ShaderMaterial" id=11]
 resource_local_to_scene = true
 render_priority = 1
-shader = SubResource( 3 )
-shader_param/demo_texture = SubResource( 4 )
+shader = ExtResource( 7 )
+shader_param/sRGB = false
+shader_param/min_alpha = 0.0
+shader_param/texture_to_draw = SubResource( 18 )
 
-[sub_resource type="Shader" id=6]
-resource_local_to_scene = true
-code = "shader_type canvas_item;
-render_mode skip_vertex_transform;
-
-uniform sampler2D demo_texture : hint_black;
-uniform bool sRGB = false;
-
-vec3 Linear2sRGB(vec3 color)
-{
-    vec3 x = color * 12.92;
-    vec3 y = 1.055 * pow(clamp(color,0.,1.),vec3(0.4166667)) - 0.055;
-    vec3 clr = color;
-    clr.r = (color.r < 0.0031308) ? x.r : y.r;
-    clr.g = (color.g < 0.0031308) ? x.g : y.g;
-    clr.b = (color.b < 0.0031308) ? x.b : y.b;
-    return clr;
-}
-
-void fragment() 
-{
-	if(sRGB)
-		COLOR = vec4(Linear2sRGB(texture(demo_texture, UV).xyz), 1.0);
-	else
-		COLOR = vec4(texture(demo_texture, UV).xyz, 1.0);
-}"
-custom_defines = ""
-
-[sub_resource type="ViewportTexture" id=7]
-viewport_path = NodePath("Viewport")
-
-[sub_resource type="ShaderMaterial" id=8]
-resource_local_to_scene = true
-shader = SubResource( 6 )
-shader_param/sRGB = true
-shader_param/demo_texture = SubResource( 7 )
-
-[sub_resource type="ViewportTexture" id=9]
+[sub_resource type="ViewportTexture" id=16]
 viewport_path = NodePath("BackBuffer")
+
+[sub_resource type="ShaderMaterial" id=7]
+resource_local_to_scene = true
+render_priority = 1
+shader = ExtResource( 7 )
+shader_param/sRGB = true
+shader_param/min_alpha = 1.0
+shader_param/texture_to_draw = SubResource( 16 )
+
+[sub_resource type="ViewportTexture" id=12]
+viewport_path = NodePath("LastFrameBuffer")
 
 [node name="Demo" type="Node2D"]
 script = ExtResource( 4 )
 
-[node name="Viewport" type="Viewport" parent="."]
-size = Vector2( 640, 360 )
-transparent_bg = true
-render_target_update_mode = 0
-
-[node name="PostProcess" type="CanvasLayer" parent="Viewport"]
-
-[node name="GI" type="TextureRect" parent="Viewport/PostProcess"]
+[node name="BackBuffer" parent="." instance=ExtResource( 1 )]
 material = SubResource( 2 )
-margin_right = 512.0
-margin_bottom = 512.0
-texture = ExtResource( 5 )
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
-[node name="BackBuffer" type="Viewport" parent="."]
-size = Vector2( 640, 360 )
-transparent_bg = true
-hdr = false
-render_target_v_flip = true
-render_target_update_mode = 0
-
-[node name="Canvas" type="CanvasLayer" parent="BackBuffer"]
-
-[node name="Texture" type="TextureRect" parent="BackBuffer/Canvas"]
-material = SubResource( 5 )
-margin_right = 640.0
-margin_bottom = 360.0
-texture = ExtResource( 5 )
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="LastFrameBuffer" parent="." instance=ExtResource( 1 )]
+material = SubResource( 11 )
 
 [node name="Light" type="Node2D" parent="."]
 position = Vector2( 64, 64 )
@@ -127,33 +62,27 @@ position = Vector2( 64, 64 )
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Screen" type="TextureRect" parent="CanvasLayer"]
-material = SubResource( 8 )
-margin_right = 640.0
-margin_bottom = 360.0
+material = SubResource( 7 )
 texture = ExtResource( 2 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+[node name="DebugRTT" type="CanvasLayer" parent="."]
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer2"]
+[node name="LastFrameBG" type="TextureRect" parent="DebugRTT"]
 visible = false
 modulate = Color( 0, 0, 0, 1 )
-margin_right = 320.0
-margin_bottom = 180.0
 texture = ExtResource( 2 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LastFrameBuffer" type="TextureRect" parent="CanvasLayer2"]
+[node name="LastFrameBuffer" type="TextureRect" parent="DebugRTT"]
 visible = false
-margin_right = 320.0
-margin_bottom = 180.0
-texture = SubResource( 9 )
+texture = SubResource( 12 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
