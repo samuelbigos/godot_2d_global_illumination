@@ -14,6 +14,8 @@ var _frame = 0
 
 """ PUBLIC """
 
+export var voronoi_multipass_material : Material = null
+
 ###########
 # METHODS #
 ###########
@@ -31,6 +33,12 @@ func _ready():
 	$VPC/DistanceBuffer/VPC/VoronoiBuffer.set_size(get_viewport().size)
 	
 	$BackBuffer.set_shader_param("RESOLUTION", get_viewport().size)
+	
+	get_viewport().render_target_update_mode = Viewport.UPDATE_DISABLED
+	$BackBuffer.render_target_update_mode = Viewport.UPDATE_DISABLED
+	$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_DISABLED
+	$VPC/DistanceBuffer.render_target_update_mode = Viewport.UPDATE_DISABLED
+	$VPC/DistanceBuffer/VPC/VoronoiBuffer.render_target_update_mode = Viewport.UPDATE_DISABLED
 
 func _process(delta):
 	
@@ -44,5 +52,15 @@ func _process(delta):
 	_frame += 1
 	
 	$DebugRTT/Label.text = String(Engine.get_frames_per_second())
+	
+	_render_voronoi()
+	
+func _render_voronoi():
+	
+	var resolution = get_viewport().size
+	var offset = pow()
+	
+	#get_viewport().render_target_update_mode = Viewport.UPDATE_ONCE
+	VisualServer.force_draw(true)
 
 """ PUBLIC """

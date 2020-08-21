@@ -91,8 +91,8 @@ bool raymarch(vec2 origin, vec2 ray, out vec2 hitPos, out float d)
 
 float get_emission_from_buffer(vec2 uv)
 {
-    highp vec2 pix = 1.0 / RESOLUTION.xy;
-    highp float e = max(texture(last_frame_buffer, uv + pix * vec2(-1,1)).a,0.);
+    vec2 pix = 1.0 / RESOLUTION.xy;
+    float e = max(texture(last_frame_buffer, uv + pix * vec2(-1,1)).a,0.);
     e = max(max(texture(last_frame_buffer, uv + pix * vec2(0,1)).a,0.),e);
     e = max(max(texture(last_frame_buffer, uv + pix * vec2(1,1)).a,0.),e);
     e = max(max(texture(last_frame_buffer, uv + pix * vec2(-1,0)).a,0.),e);

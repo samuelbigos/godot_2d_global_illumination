@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://RenderTarget.tscn" type="PackedScene" id=1]
 [ext_resource path="res://1px.png" type="Texture" id=2]
@@ -6,11 +6,14 @@
 [ext_resource path="res://Demo.gd" type="Script" id=4]
 [ext_resource path="res://noise.png" type="Texture" id=5]
 [ext_resource path="res://assets/circle.png" type="Texture" id=6]
-[ext_resource path="res://shaders/DrawTextureShader.shader" type="Shader" id=7]
+[ext_resource path="res://shaders/VoronoiMultipass.shader" type="Shader" id=7]
 [ext_resource path="res://assets/square.png" type="Texture" id=8]
 [ext_resource path="res://assets/arch.png" type="Texture" id=9]
-[ext_resource path="res://shaders/DistanceTexture.shader" type="Shader" id=10]
-[ext_resource path="res://shaders/Voronoi.shader" type="Shader" id=11]
+[ext_resource path="res://shaders/DrawTexture.shader" type="Shader" id=10]
+[ext_resource path="res://shaders/VoronoiSeed.shader" type="Shader" id=11]
+
+[sub_resource type="ShaderMaterial" id=10]
+shader = ExtResource( 7 )
 
 [sub_resource type="ViewportTexture" id=1]
 viewport_path = NodePath("LastFrameBuffer")
@@ -33,33 +36,34 @@ viewport_path = NodePath("BackBuffer")
 [sub_resource type="ShaderMaterial" id=4]
 resource_local_to_scene = true
 render_priority = 1
-shader = ExtResource( 7 )
+shader = ExtResource( 10 )
 shader_param/sRGB = false
 shader_param/min_alpha = 0.0
 shader_param/texture_to_draw = SubResource( 3 )
 
-[sub_resource type="ViewportTexture" id=11]
+[sub_resource type="ViewportTexture" id=5]
 viewport_path = NodePath("VoronoiBuffer")
 
 [sub_resource type="ShaderMaterial" id=6]
 resource_local_to_scene = true
 render_priority = 1
-shader = ExtResource( 7 )
+shader = ExtResource( 10 )
 shader_param/sRGB = true
 shader_param/min_alpha = 1.0
-shader_param/texture_to_draw = SubResource( 11 )
+shader_param/texture_to_draw = SubResource( 5 )
 
 [sub_resource type="ViewportTexture" id=7]
 viewport_path = NodePath("LastFrameBuffer")
 
-[sub_resource type="ShaderMaterial" id=14]
-shader = ExtResource( 10 )
+[sub_resource type="ShaderMaterial" id=8]
+shader = ExtResource( 7 )
 
-[sub_resource type="ShaderMaterial" id=13]
+[sub_resource type="ShaderMaterial" id=9]
 shader = ExtResource( 11 )
 
 [node name="Demo" type="Node2D"]
 script = ExtResource( 4 )
+voronoi_multipass_material = SubResource( 10 )
 
 [node name="BackBuffer" parent="." instance=ExtResource( 1 )]
 material = SubResource( 2 )
@@ -108,7 +112,7 @@ __meta__ = {
 }
 
 [node name="VPC" type="ViewportContainer" parent="."]
-material = SubResource( 14 )
+material = SubResource( 8 )
 margin_right = 40.0
 margin_bottom = 40.0
 __meta__ = {
@@ -116,9 +120,11 @@ __meta__ = {
 }
 
 [node name="DistanceBuffer" type="Viewport" parent="VPC"]
+handle_input_locally = false
+render_target_update_mode = 3
 
 [node name="VPC" type="ViewportContainer" parent="VPC/DistanceBuffer"]
-material = SubResource( 13 )
+material = SubResource( 9 )
 margin_right = 640.0
 margin_bottom = 360.0
 __meta__ = {
