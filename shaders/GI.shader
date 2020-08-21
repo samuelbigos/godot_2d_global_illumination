@@ -4,15 +4,16 @@ shader_type canvas_item;
 uniform vec2 LIGHT_POS = vec2(0.0, 0.0);
 
 // consts
-uniform highp float PI = 3.141596;
-uniform highp float RAYS_PER_PIXEL = 32.0;
-uniform highp vec2 RESOLUTION = vec2(0.0, 0.0);
+uniform float PI = 3.141596;
+uniform float RAYS_PER_PIXEL = 32.0;
+uniform vec2 RESOLUTION = vec2(0.0, 0.0);
 
-uniform highp sampler2D last_frame_buffer;
-uniform highp sampler2D noise_texture;
+uniform sampler2D in_data;
+uniform sampler2D last_frame_buffer;
+uniform sampler2D noise_texture;
 uniform int frame = 0;
 
-highp float epsilon()
+float epsilon()
 {
 	return 0.5/RESOLUTION.x;
 }

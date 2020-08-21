@@ -1,7 +1,6 @@
 extends Node2D
 class_name Demo
 """
-Does XXX.
 """
 
 ###########
@@ -14,7 +13,7 @@ var _frame = 0
 
 """ PUBLIC """
 
-export var voronoi_multipass_material : Material = null
+export var voronoi_buffer_scene : PackedScene = null
 
 ###########
 # METHODS #
@@ -28,18 +27,16 @@ func _ready():
 	$CanvasLayer/Screen.rect_size = get_viewport().size
 	$DebugRTT/LastFrameBG.rect_size = get_viewport().size * 0.5
 	$DebugRTT/LastFrameBuffer.rect_size = get_viewport().size * 0.5
-	
-	$VPC/DistanceBuffer.set_size(get_viewport().size)
-	$VPC/DistanceBuffer/VPC/VoronoiBuffer.set_size(get_viewport().size)
+	$SceneBuffer.set_size(get_viewport().size)
 	
 	$BackBuffer.set_shader_param("RESOLUTION", get_viewport().size)
+		
+	_setup_voronoi_pipeline()
+	_setup_GI_pipeline()
+		
+	# output to screen
+	$CanvasLayer/Screen.get_material().set_shader_param("texture_to_draw", $DistanceField.get_texture())
 	
-	get_viewport().render_target_update_mode = Viewport.UPDATE_DISABLED
-	$BackBuffer.render_target_update_mode = Viewport.UPDATE_DISABLED
-	$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_DISABLED
-	$VPC/DistanceBuffer.render_target_update_mode = Viewport.UPDATE_DISABLED
-	$VPC/DistanceBuffer/VPC/VoronoiBuffer.render_target_update_mode = Viewport.UPDATE_DISABLED
-
 func _process(delta):
 	
 	if Input.is_action_pressed("ui_click"):
@@ -52,15 +49,41 @@ func _process(delta):
 	_frame += 1
 	
 	$DebugRTT/Label.text = String(Engine.get_frames_per_second())
+		
+func _setup_voronoi_pipeline():
 	
-	_render_voronoi()
+	# voronoi
+	$VoronoiSeed.render_target_update_mode = Viewport.UPDATE_ALWAYS
+	$VoronoiSeed.set_size(get_viewport().size)
+	$VoronoiSeed/Texture.rect_size = get_viewport().size
+		
+	var passes = log(max(get_viewport().size.x, get_viewport().size.y)) / log(2.0)
+	var buffers = []
 	
-func _render_voronoi():
+	for i in range(0, passes):
+		var offset = pow(2, passes - i - 1)
+		var buffer = voronoi_buffer_scene.instance()
+		add_child(buffer)
+		buffers.append(buffer)
+		
+		var input_texture = $VoronoiSeed.get_texture()
+		if i > 0:
+			input_texture = buffers[i - 1].get_texture()
+			
+		buffer.setup(i, passes, offset, input_texture, get_viewport().size)
+		print("setup voronoi with offset %d" % [offset])
 	
-	var resolution = get_viewport().size
-	var offset = pow()
+	# distance field
+	$DistanceField.render_target_update_mode = Viewport.UPDATE_ALWAYS
+	$DistanceField.set_size(get_viewport().size)
+	$DistanceField/Texture.rect_size = get_viewport().size
 	
-	#get_viewport().render_target_update_mode = Viewport.UPDATE_ONCE
-	VisualServer.force_draw(true)
-
+	$DistanceField/Texture.get_material().set_shader_param("input_tex", buffers[passes - 1].get_texture())
+	$DistanceField/Texture.get_material().set_shader_param("scene_tex", $SceneBuffer.get_texture())
+	
+func _setup_GI_pipeline():
+	
+	# GI
+	$BackBuffer.set_shader_param("in_data", $DistanceField)
+	
 """ PUBLIC """

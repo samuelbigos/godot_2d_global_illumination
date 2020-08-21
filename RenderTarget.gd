@@ -1,7 +1,6 @@
 extends Viewport
 class_name RenderTarget
 """
-Does XXX.
 """
 
 ###########

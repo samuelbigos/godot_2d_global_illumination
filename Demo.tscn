@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://RenderTarget.tscn" type="PackedScene" id=1]
 [ext_resource path="res://1px.png" type="Texture" id=2]
@@ -6,14 +6,12 @@
 [ext_resource path="res://Demo.gd" type="Script" id=4]
 [ext_resource path="res://noise.png" type="Texture" id=5]
 [ext_resource path="res://assets/circle.png" type="Texture" id=6]
-[ext_resource path="res://shaders/VoronoiMultipass.shader" type="Shader" id=7]
+[ext_resource path="res://VoronoiBuffer.tscn" type="PackedScene" id=7]
 [ext_resource path="res://assets/square.png" type="Texture" id=8]
 [ext_resource path="res://assets/arch.png" type="Texture" id=9]
 [ext_resource path="res://shaders/DrawTexture.shader" type="Shader" id=10]
 [ext_resource path="res://shaders/VoronoiSeed.shader" type="Shader" id=11]
-
-[sub_resource type="ShaderMaterial" id=10]
-shader = ExtResource( 7 )
+[ext_resource path="res://shaders/DistanceField.shader" type="Shader" id=12]
 
 [sub_resource type="ViewportTexture" id=1]
 viewport_path = NodePath("LastFrameBuffer")
@@ -48,22 +46,28 @@ viewport_path = NodePath("VoronoiBuffer")
 resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource( 10 )
-shader_param/sRGB = true
+shader_param/sRGB = false
 shader_param/min_alpha = 1.0
 shader_param/texture_to_draw = SubResource( 5 )
 
 [sub_resource type="ViewportTexture" id=7]
 viewport_path = NodePath("LastFrameBuffer")
 
-[sub_resource type="ShaderMaterial" id=8]
-shader = ExtResource( 7 )
+[sub_resource type="ViewportTexture" id=8]
+viewport_path = NodePath("SceneBuffer")
 
 [sub_resource type="ShaderMaterial" id=9]
+resource_local_to_scene = true
 shader = ExtResource( 11 )
+shader_param/input_tex = SubResource( 8 )
+
+[sub_resource type="ShaderMaterial" id=10]
+resource_local_to_scene = true
+shader = ExtResource( 12 )
 
 [node name="Demo" type="Node2D"]
 script = ExtResource( 4 )
-voronoi_multipass_material = SubResource( 10 )
+voronoi_buffer_scene = ExtResource( 7 )
 
 [node name="BackBuffer" parent="." instance=ExtResource( 1 )]
 material = SubResource( 2 )
@@ -72,12 +76,11 @@ material = SubResource( 2 )
 material = SubResource( 4 )
 
 [node name="Light" type="Node2D" parent="."]
-position = Vector2( 64, 64 )
+position = Vector2( 273.3, 235.246 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Screen" type="TextureRect" parent="CanvasLayer"]
-visible = false
 material = SubResource( 6 )
 texture = ExtResource( 2 )
 expand = true
@@ -107,98 +110,102 @@ __meta__ = {
 [node name="Label" type="Label" parent="DebugRTT"]
 margin_right = 40.0
 margin_bottom = 14.0
+custom_colors/font_color = Color( 1, 0, 0.913725, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VPC" type="ViewportContainer" parent="."]
-material = SubResource( 8 )
-margin_right = 40.0
-margin_bottom = 40.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="DistanceBuffer" type="Viewport" parent="VPC"]
-handle_input_locally = false
-render_target_update_mode = 3
-
-[node name="VPC" type="ViewportContainer" parent="VPC/DistanceBuffer"]
-material = SubResource( 9 )
-margin_right = 640.0
-margin_bottom = 360.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="VoronoiBuffer" type="Viewport" parent="VPC/DistanceBuffer/VPC"]
-size = Vector2( 640, 360 )
+[node name="SceneBuffer" type="Viewport" parent="."]
+transparent_bg = true
 handle_input_locally = false
 hdr = false
+render_target_v_flip = true
 render_target_update_mode = 3
 
-[node name="MainScene" type="Node2D" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer"]
+[node name="MainScene" type="Node2D" parent="SceneBuffer"]
 
-[node name="circle" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+[node name="circle" type="Sprite" parent="SceneBuffer/MainScene"]
 modulate = Color( 0.545098, 0.0862745, 0.8, 1 )
-position = Vector2( 280.68, 36.1233 )
+position = Vector2( 408.98, 53.1037 )
+scale = Vector2( 3, 3 )
 texture = ExtResource( 6 )
+centered = false
 
-[node name="square" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
+[node name="square" type="Sprite" parent="SceneBuffer/MainScene"]
 modulate = Color( 0.921569, 1, 0, 1 )
-position = Vector2( 136.39, 280.355 )
+position = Vector2( 240.471, 39.4302 )
+scale = Vector2( 3, 3 )
 texture = ExtResource( 8 )
+centered = false
 
-[node name="square4" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
-position = Vector2( 694.727, 320.615 )
+[node name="square4" type="Sprite" parent="SceneBuffer/MainScene"]
+position = Vector2( 117.272, 166.504 )
+scale = Vector2( 3, 3 )
 texture = ExtResource( 8 )
+centered = false
 
-[node name="circle2" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
-position = Vector2( 305.801, 184.556 )
+[node name="circle2" type="Sprite" parent="SceneBuffer/MainScene"]
+modulate = Color( 0.776471, 0, 0, 1 )
+position = Vector2( 349.031, 415.066 )
+scale = Vector2( 3, 3 )
 texture = ExtResource( 6 )
+centered = false
 
-[node name="circle4" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
-position = Vector2( 847.187, 206.805 )
+[node name="circle5" type="Sprite" parent="SceneBuffer/MainScene"]
+modulate = Color( 0.776471, 0, 0, 1 )
+position = Vector2( 304.324, 208.51 )
+scale = Vector2( 3, 3 )
 texture = ExtResource( 6 )
+centered = false
 
-[node name="circle5" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
-modulate = Color( 0, 0.670588, 1, 1 )
-position = Vector2( 877.911, 432.47 )
-texture = ExtResource( 6 )
-
-[node name="arch" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
-modulate = Color( 1, 0, 0.960784, 1 )
-position = Vector2( 435.546, 249.688 )
-rotation = 1.77675
+[node name="circle3" type="Sprite" parent="SceneBuffer/MainScene"]
+modulate = Color( 0.545098, 0.0862745, 0.8, 1 )
+position = Vector2( 340.485, 397.034 )
+rotation = -0.760963
+scale = Vector2( 3, 3 )
 texture = ExtResource( 9 )
+centered = false
 
-[node name="arch4" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
-modulate = Color( 1, 0, 0.960784, 1 )
-position = Vector2( 634.725, 459.462 )
-rotation = 1.77675
+[node name="square2" type="Sprite" parent="SceneBuffer/MainScene"]
+modulate = Color( 1, 0.631373, 0, 1 )
+position = Vector2( 87.6572, 137.409 )
+scale = Vector2( 3, 3 )
 texture = ExtResource( 9 )
+centered = false
 
-[node name="arch2" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
-position = Vector2( 445.522, 79.0962 )
+[node name="square5" type="Sprite" parent="SceneBuffer/MainScene"]
+position = Vector2( 420.323, 208.435 )
+rotation = -4.21672
+scale = Vector2( 3, 3 )
 texture = ExtResource( 9 )
+centered = false
 
-[node name="square2" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
-modulate = Color( 0.568627, 0.501961, 0.501961, 1 )
-position = Vector2( 210.194, 134.992 )
-rotation = -1.01578
-texture = ExtResource( 8 )
-
-[node name="square3" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
-modulate = Color( 0.568627, 0.501961, 0.501961, 1 )
-position = Vector2( 655.168, 146.646 )
-rotation = -1.01578
-texture = ExtResource( 8 )
-
-[node name="circle3" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
-position = Vector2( 285.838, 332.863 )
-texture = ExtResource( 6 )
-
-[node name="arch3" type="Sprite" parent="VPC/DistanceBuffer/VPC/VoronoiBuffer/MainScene"]
-position = Vector2( 59.3749, 115.432 )
-rotation = -0.747001
+[node name="circle4" type="Sprite" parent="SceneBuffer/MainScene"]
+modulate = Color( 0.262745, 0, 0.776471, 1 )
+position = Vector2( 94.8041, 451.751 )
+rotation = 3.90081
+scale = Vector2( 3, 3 )
 texture = ExtResource( 9 )
+centered = false
+
+[node name="VoronoiSeed" type="Viewport" parent="."]
+hdr = false
+render_target_v_flip = true
+render_target_update_mode = 3
+
+[node name="Texture" type="TextureRect" parent="VoronoiSeed"]
+material = SubResource( 9 )
+texture = ExtResource( 2 )
+expand = true
+
+[node name="DistanceField" type="Viewport" parent="."]
+hdr = false
+render_target_v_flip = true
+render_target_update_mode = 3
+
+[node name="Texture" type="TextureRect" parent="DistanceField"]
+material = SubResource( 10 )
+margin_right = 40.0
+margin_bottom = 40.0
+texture = ExtResource( 2 )
+expand = true
