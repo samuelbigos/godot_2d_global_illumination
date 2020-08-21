@@ -1,20 +1,15 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://RenderTarget.tscn" type="PackedScene" id=1]
 [ext_resource path="res://1px.png" type="Texture" id=2]
 [ext_resource path="res://shaders/GI.shader" type="Shader" id=3]
 [ext_resource path="res://Demo.gd" type="Script" id=4]
 [ext_resource path="res://noise.png" type="Texture" id=5]
-[ext_resource path="res://assets/circle.png" type="Texture" id=6]
+[ext_resource path="res://Ball.tscn" type="PackedScene" id=6]
 [ext_resource path="res://VoronoiBuffer.tscn" type="PackedScene" id=7]
-[ext_resource path="res://assets/square.png" type="Texture" id=8]
-[ext_resource path="res://assets/arch.png" type="Texture" id=9]
 [ext_resource path="res://shaders/DrawTexture.shader" type="Shader" id=10]
 [ext_resource path="res://shaders/VoronoiSeed.shader" type="Shader" id=11]
 [ext_resource path="res://shaders/DistanceField.shader" type="Shader" id=12]
-
-[sub_resource type="ViewportTexture" id=1]
-viewport_path = NodePath("LastFrameBuffer")
 
 [sub_resource type="ShaderMaterial" id=2]
 resource_local_to_scene = true
@@ -22,11 +17,11 @@ render_priority = 1
 shader = ExtResource( 3 )
 shader_param/LIGHT_POS = Vector2( 0, 0 )
 shader_param/PI = 3.1416
-shader_param/RAYS_PER_PIXEL = 32.0
-shader_param/RESOLUTION = Vector2( 0, 0 )
+shader_param/resolution = null
+shader_param/rays_per_pixel = 32.0
 shader_param/frame = 0
-shader_param/last_frame_buffer = SubResource( 1 )
-shader_param/noise_texture = ExtResource( 5 )
+shader_param/dist_mod = 2.0
+shader_param/noise_data = ExtResource( 5 )
 
 [sub_resource type="ViewportTexture" id=3]
 viewport_path = NodePath("BackBuffer")
@@ -46,12 +41,9 @@ viewport_path = NodePath("VoronoiBuffer")
 resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource( 10 )
-shader_param/sRGB = false
+shader_param/sRGB = true
 shader_param/min_alpha = 1.0
 shader_param/texture_to_draw = SubResource( 5 )
-
-[sub_resource type="ViewportTexture" id=7]
-viewport_path = NodePath("LastFrameBuffer")
 
 [sub_resource type="ViewportTexture" id=8]
 viewport_path = NodePath("SceneBuffer")
@@ -64,10 +56,15 @@ shader_param/input_tex = SubResource( 8 )
 [sub_resource type="ShaderMaterial" id=10]
 resource_local_to_scene = true
 shader = ExtResource( 12 )
+shader_param/dist_mod = 2.0
+
+[sub_resource type="RectangleShape2D" id=11]
+extents = Vector2( 0.499567, 0.5 )
 
 [node name="Demo" type="Node2D"]
 script = ExtResource( 4 )
 voronoi_buffer_scene = ExtResource( 7 )
+ball_scene = ExtResource( 6 )
 
 [node name="BackBuffer" parent="." instance=ExtResource( 1 )]
 material = SubResource( 2 )
@@ -90,18 +87,36 @@ __meta__ = {
 
 [node name="DebugRTT" type="CanvasLayer" parent="."]
 
-[node name="LastFrameBG" type="TextureRect" parent="DebugRTT"]
+[node name="SceneDebug" type="TextureRect" parent="DebugRTT"]
 visible = false
-modulate = Color( 0, 0, 0, 1 )
-texture = ExtResource( 2 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LastFrameBuffer" type="TextureRect" parent="DebugRTT"]
+[node name="LastFrameDebug" type="TextureRect" parent="DebugRTT"]
 visible = false
-texture = SubResource( 7 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VoronoiSeedDebug" type="TextureRect" parent="DebugRTT"]
+visible = false
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VoronoiDebug" type="TextureRect" parent="DebugRTT"]
+visible = false
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DistanceFieldDebug" type="TextureRect" parent="DebugRTT"]
+visible = false
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -121,72 +136,6 @@ handle_input_locally = false
 hdr = false
 render_target_v_flip = true
 render_target_update_mode = 3
-
-[node name="MainScene" type="Node2D" parent="SceneBuffer"]
-
-[node name="circle" type="Sprite" parent="SceneBuffer/MainScene"]
-modulate = Color( 0.545098, 0.0862745, 0.8, 1 )
-position = Vector2( 408.98, 53.1037 )
-scale = Vector2( 3, 3 )
-texture = ExtResource( 6 )
-centered = false
-
-[node name="square" type="Sprite" parent="SceneBuffer/MainScene"]
-modulate = Color( 0.921569, 1, 0, 1 )
-position = Vector2( 240.471, 39.4302 )
-scale = Vector2( 3, 3 )
-texture = ExtResource( 8 )
-centered = false
-
-[node name="square4" type="Sprite" parent="SceneBuffer/MainScene"]
-position = Vector2( 117.272, 166.504 )
-scale = Vector2( 3, 3 )
-texture = ExtResource( 8 )
-centered = false
-
-[node name="circle2" type="Sprite" parent="SceneBuffer/MainScene"]
-modulate = Color( 0.776471, 0, 0, 1 )
-position = Vector2( 349.031, 415.066 )
-scale = Vector2( 3, 3 )
-texture = ExtResource( 6 )
-centered = false
-
-[node name="circle5" type="Sprite" parent="SceneBuffer/MainScene"]
-modulate = Color( 0.776471, 0, 0, 1 )
-position = Vector2( 304.324, 208.51 )
-scale = Vector2( 3, 3 )
-texture = ExtResource( 6 )
-centered = false
-
-[node name="circle3" type="Sprite" parent="SceneBuffer/MainScene"]
-modulate = Color( 0.545098, 0.0862745, 0.8, 1 )
-position = Vector2( 340.485, 397.034 )
-rotation = -0.760963
-scale = Vector2( 3, 3 )
-texture = ExtResource( 9 )
-centered = false
-
-[node name="square2" type="Sprite" parent="SceneBuffer/MainScene"]
-modulate = Color( 1, 0.631373, 0, 1 )
-position = Vector2( 87.6572, 137.409 )
-scale = Vector2( 3, 3 )
-texture = ExtResource( 9 )
-centered = false
-
-[node name="square5" type="Sprite" parent="SceneBuffer/MainScene"]
-position = Vector2( 420.323, 208.435 )
-rotation = -4.21672
-scale = Vector2( 3, 3 )
-texture = ExtResource( 9 )
-centered = false
-
-[node name="circle4" type="Sprite" parent="SceneBuffer/MainScene"]
-modulate = Color( 0.262745, 0, 0.776471, 1 )
-position = Vector2( 94.8041, 451.751 )
-rotation = 3.90081
-scale = Vector2( 3, 3 )
-texture = ExtResource( 9 )
-centered = false
 
 [node name="VoronoiSeed" type="Viewport" parent="."]
 hdr = false
@@ -209,3 +158,128 @@ margin_right = 40.0
 margin_bottom = 40.0
 texture = ExtResource( 2 )
 expand = true
+
+[node name="MainScene" type="Node2D" parent="."]
+
+[node name="Top" type="Sprite" parent="MainScene"]
+modulate = Color( 0.192157, 0.192157, 0.192157, 1 )
+position = Vector2( 255.612, -0.0108492 )
+scale = Vector2( 516.224, 14.9783 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Top"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Top/StaticBody2D"]
+shape = SubResource( 11 )
+
+[node name="Right" type="Sprite" parent="MainScene"]
+modulate = Color( 0.192157, 0.192157, 0.192157, 1 )
+position = Vector2( 511.46, 256.093 )
+scale = Vector2( 12.5267, 517.877 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Right"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Right/StaticBody2D"]
+shape = SubResource( 11 )
+
+[node name="Left" type="Sprite" parent="MainScene"]
+modulate = Color( 0.192157, 0.192157, 0.192157, 1 )
+position = Vector2( 0.460298, 256.093 )
+scale = Vector2( 12.5267, 517.877 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Left"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Left/StaticBody2D"]
+shape = SubResource( 11 )
+
+[node name="BottomL" type="Sprite" parent="MainScene"]
+modulate = Color( 0.192157, 0.192157, 0.192157, 1 )
+position = Vector2( 155.172, 501.475 )
+rotation = -0.349066
+scale = Vector2( 231.669, 14.9783 )
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/BottomL"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/BottomL/StaticBody2D"]
+shape = SubResource( 11 )
+
+[node name="Slope" type="Sprite" parent="MainScene"]
+modulate = Color( 0.192157, 0.192157, 0.192157, 1 )
+position = Vector2( 156.438, 111.222 )
+rotation = 0.337157
+scale = Vector2( 170.197, 14.9783 )
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope/StaticBody2D"]
+shape = SubResource( 11 )
+
+[node name="Slope2" type="Sprite" parent="MainScene"]
+modulate = Color( 0.192157, 0.192157, 0.192157, 1 )
+position = Vector2( 380.075, 165.609 )
+rotation = -0.304327
+scale = Vector2( 156.469, 14.9783 )
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope2/StaticBody2D"]
+shape = SubResource( 11 )
+
+[node name="Slope3" type="Sprite" parent="MainScene"]
+modulate = Color( 0.192157, 0.192157, 0.192157, 1 )
+position = Vector2( 104.32, 225.319 )
+rotation = 0.32631
+scale = Vector2( 215.83, 14.9783 )
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope3/StaticBody2D"]
+shape = SubResource( 11 )
+
+[node name="Slope4" type="Sprite" parent="MainScene"]
+modulate = Color( 0.192157, 0.192157, 0.192157, 1 )
+position = Vector2( 407.043, 305.205 )
+rotation = -0.277588
+scale = Vector2( 215.83, 14.9783 )
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope4"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope4/StaticBody2D"]
+shape = SubResource( 11 )
+
+[node name="BottomR" type="Sprite" parent="MainScene"]
+modulate = Color( 0.192157, 0.192157, 0.192157, 1 )
+position = Vector2( 362.244, 499.731 )
+rotation = 0.349066
+scale = Vector2( 220.704, 14.9783 )
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/BottomR"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/BottomR/StaticBody2D"]
+shape = SubResource( 11 )
