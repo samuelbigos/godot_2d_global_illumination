@@ -19,7 +19,7 @@ var _rng
 
 export var voronoi_buffer_scene : PackedScene = null
 export var ball_scene : PackedScene = null
-export var ball_frequency = 0.5
+export var ball_frequency = 0.15
 
 ###########
 # METHODS #
@@ -53,31 +53,50 @@ func _ready():
 	$DebugRTT/DistanceFieldDebug.texture = $DistanceField.get_texture()
 	
 	_main_scene = $MainScene
+	var pinjoint = $MainScene/PinJoint2D
 	remove_child($MainScene)
 	$SceneBuffer.add_child(_main_scene)
+	pinjoint.node_a = pinjoint.get_children()[0].get_path()
+	pinjoint.node_b = pinjoint.get_children()[1].get_path()
 	
 func _process(delta):
 	
+	_ball_timer -= delta
 	if Input.is_action_pressed("ui_click"):
-		var mouse_pos = get_global_mouse_position() / get_viewport().size
-		var aspect = get_viewport().size.x / get_viewport().size.y
-		mouse_pos.x *= aspect
-		$BackBuffer.set_shader_param("LIGHT_POS", -mouse_pos)
+		
+		if _ball_timer < 0.0:
+			var ball = ball_scene.instance()
+			_main_scene.add_child(ball)
+			var sprite = ball.get_child(0)
+		
+			match _rng.randi_range(0, 4):
+				0: 
+					sprite.modulate = Color.aqua
+				1: 
+					sprite.modulate = Color.cornsilk
+				2: 
+					sprite.modulate = Color.fuchsia
+				3: 
+					sprite.modulate = Color.limegreen
+				4: 
+					sprite.modulate = Color.yellow
+					
+			var colour = Vector3(_rng.randf(), _rng.randf(), _rng.randf()).normalized()
+			sprite.modulate = Color(colour.x, colour.y, colour.z)
+			
+			#ball.position = Vector2(_rng.randf_range(15.0, get_viewport().size.x - 15.0), 25.0)
+			ball.position = get_global_mouse_position()
+			_ball_timer = ball_frequency
+		
+		#var mouse_pos = get_global_mouse_position() / get_viewport().size
+		#var aspect = get_viewport().size.x / get_viewport().size.y
+		#mouse_pos.x *= aspect
+		#$BackBuffer.set_shader_param("LIGHT_POS", -mouse_pos)
 	
 	$BackBuffer.set_shader_param("frame", _frame)
 	_frame += 1
 	
 	$DebugRTT/Label.text = String(Engine.get_frames_per_second())
-	
-	_ball_timer -= delta
-	if _ball_timer < 0.0:
-		var ball = ball_scene.instance()
-		_main_scene.add_child(ball)
-		var sprite = ball.get_child(0)
-		var colour = Vector3(_rng.randf(), _rng.randf(), _rng.randf()).normalized()
-		sprite.modulate = Color(colour.x, colour.y, colour.z)
-		ball.position = Vector2(_rng.randf_range(25.0, get_viewport().size.x - 25.0), 25.0)
-		_ball_timer = ball_frequency
 		
 func _setup_voronoi_pipeline():
 	
@@ -117,6 +136,7 @@ func _setup_GI_pipeline():
 	
 	$BackBuffer.set_shader_param("resolution", get_viewport().size)
 	$BackBuffer.set_shader_param("occlusion_data", $DistanceField.get_texture())
+	$BackBuffer.set_shader_param("emissive_data", $SceneBuffer.get_texture())
 	$BackBuffer.set_shader_param("colour_data", $SceneBuffer.get_texture())
 	$BackBuffer.set_shader_param("last_frame_data", $LastFrameBuffer.get_texture())
 	

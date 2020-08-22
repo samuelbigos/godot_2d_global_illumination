@@ -9,6 +9,7 @@ uniform vec2 resolution;
 uniform float rays_per_pixel;
 uniform sampler2D occlusion_data;
 uniform sampler2D colour_data;
+uniform sampler2D emissive_data;
 uniform sampler2D last_frame_data;
 uniform sampler2D noise_data;
 uniform int frame = 0;
@@ -29,12 +30,16 @@ void get_material(vec2 uv, out float emissive, out vec3 colour)
 {	
 	if(light_dist(uv) < epsilon())
 	{
-		emissive = 4.0;
-		colour = vec3(1.0);
+		emissive = 0.0;
+		colour = vec3(0.0);
 	}
 	else if(texture(occlusion_data, uv).x < epsilon())
 	{
-		emissive = 1.0;
+		vec3 e = texture(emissive_data, uv).xyz;
+		if(e.x > 0.0 || e.y > 0.0 || e.z > 0.0)
+			emissive = 1.5;
+		else
+			emissive = 0.0;
 		colour = texture(colour_data, uv).xyz;
 	}
 	else

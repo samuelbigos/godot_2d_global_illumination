@@ -46,11 +46,7 @@ config/icon="res://icon.png"
 
 window/size/width=512
 window/size/height=512
-window/size/test_width=512
-window/size/test_height=512
 window/vsync/use_vsync=false
-window/stretch/mode="viewport"
-window/stretch/aspect="keep"
 
 [input]
 
@@ -62,5 +58,7 @@ ui_click={
 
 [rendering]
 
-environment/default_clear_color=Color( 0, 0, 0, 0 )
+environment/default_clear_color=Color( 0, 0, 0, 1 )
 environment/default_environment="res://default_env.tres"
+environment/size/height=256
+environment/size/width=256

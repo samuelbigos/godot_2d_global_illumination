@@ -7,7 +7,7 @@ uniform float dist_mod = 2.0;
 void fragment() 
 {
 	vec4 scene_col = texture(scene_tex, UV);
-	if(scene_col.a > 0.0)
+	if(scene_col.x > 0.0 || scene_col.y > 0.0 || scene_col.z > 0.0)
 	{
 		COLOR = vec4(0.0);
 	}
