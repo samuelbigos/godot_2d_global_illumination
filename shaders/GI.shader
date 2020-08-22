@@ -7,40 +7,28 @@ uniform vec2 LIGHT_POS = vec2(0.0, 0.0);
 uniform float PI = 3.141596;
 uniform vec2 resolution;
 uniform float rays_per_pixel;
-uniform sampler2D occlusion_data;
-uniform sampler2D colour_data;
-uniform sampler2D emissive_data;
+uniform sampler2D distance_data;
+uniform sampler2D scene_data;
 uniform sampler2D last_frame_data;
 uniform sampler2D noise_data;
 uniform int frame = 0;
-uniform float dist_mod = 2.0;
+uniform float dist_mod;
 
 float epsilon()
 {
-	return 0.5 / resolution.x;
+	return 0.1 / resolution.x;
 }
 
-float sd_sphere(vec2 p, float s)
-{
-	return length(p)-s;
-}
-float light_dist(vec2 uv) { return length(LIGHT_POS + uv) - 0.025; }
-
-void get_material(vec2 uv, out float emissive, out vec3 colour)
+void get_material(vec2 uv, vec4 hit_data, out float emissive, out vec3 colour)
 {	
-	if(light_dist(uv) < epsilon())
+	if(hit_data.x / dist_mod < epsilon())
 	{
-		emissive = 0.0;
-		colour = vec3(0.0);
-	}
-	else if(texture(occlusion_data, uv).x < epsilon())
-	{
-		vec3 e = texture(emissive_data, uv).xyz;
-		if(e.x > 0.0 || e.y > 0.0 || e.z > 0.0)
-			emissive = 1.5;
+		vec4 mat_data = texture(scene_data, uv);
+		if(mat_data.x > 0.0 || mat_data.y > 0.0 || mat_data.z > 0.0)
+			emissive = 1.0;
 		else
 			emissive = 0.0;
-		colour = texture(colour_data, uv).xyz;
+		colour = mat_data.xyz;
 	}
 	else
 	{
@@ -49,15 +37,14 @@ void get_material(vec2 uv, out float emissive, out vec3 colour)
 	}
 }
 
-float map(vec2 uv)
+float map(vec2 uv, out vec4 hit_data)
 {
-	float d = light_dist(uv);
-	vec4 data = texture(occlusion_data, uv);
-	d = min(d, data.x / dist_mod);
+	hit_data = texture(distance_data, uv);
+	float d = hit_data.x / dist_mod;
     return d;
 }
 
-bool raymarch(vec2 origin, vec2 ray, out vec2 hitPos, out float d)
+bool raymarch(vec2 origin, vec2 ray, out vec2 hitPos, out vec4 hit_data, out float d)
 {
 	float t = 0.0;
 	float prev_dist = 1.0;
@@ -66,14 +53,14 @@ bool raymarch(vec2 origin, vec2 ray, out vec2 hitPos, out float d)
 	for(int i = 0; i < 32; i++)
 	{
 		samplePoint = origin + ray * t;
-		dist = map(samplePoint);
+		dist = map(samplePoint, hit_data);
 		if(dist < epsilon())
 		{
 			hitPos = samplePoint;
   			return true;
 		}
 		
-		t += dist / dist_mod;
+		t += dist;
 		d = t;
 	}
 	return false;
@@ -111,15 +98,16 @@ void fragment()
 	for(float i = 0.0; i < rays_per_pixel; i++)
 	{
 		vec2 hit_pos;
+		vec4 hit_data;
 		float dist;
-		float curAngle = rand02pi + golden_angle * i;
-		vec2 rand_direction = vec2(cos(curAngle), sin(curAngle));
-		bool hit = raymarch(uv, rand_direction, hit_pos, dist);
+		float cur_angle = rand02pi + golden_angle * i;
+		vec2 rand_direction = vec2(cos(cur_angle), sin(cur_angle));
+		bool hit = raymarch(uv, rand_direction, hit_pos, hit_data, dist);
 		if(hit)
 		{
 			float mat_emissive;
 			vec3 mat_colour;
-			get_material(hit_pos, mat_emissive, mat_colour);
+			get_material(hit_pos, hit_data, mat_emissive, mat_colour);
 			
 			float d = max(dist, 0.0);
 			vec2 st = hit_pos;

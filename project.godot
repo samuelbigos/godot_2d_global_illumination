@@ -46,7 +46,11 @@ config/icon="res://icon.png"
 
 window/size/width=512
 window/size/height=512
+window/size/test_width=512
+window/size/test_height=512
 window/vsync/use_vsync=false
+window/stretch/mode="viewport"
+window/stretch/aspect="keep"
 
 [input]
 

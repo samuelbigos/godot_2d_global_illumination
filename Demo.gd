@@ -19,7 +19,7 @@ var _rng
 
 export var voronoi_buffer_scene : PackedScene = null
 export var ball_scene : PackedScene = null
-export var ball_frequency = 0.15
+export var ball_frequency = 0.025
 
 ###########
 # METHODS #
@@ -127,6 +127,7 @@ func _setup_voronoi_pipeline():
 	
 	$DistanceField/Texture.get_material().set_shader_param("input_tex", _voronoi_buffers[passes - 1].get_texture())
 	$DistanceField/Texture.get_material().set_shader_param("scene_tex", $SceneBuffer.get_texture())
+	$DistanceField/Texture.get_material().set_shader_param("dist_mod", 10.0)
 	
 func _setup_GI_pipeline():
 
@@ -135,9 +136,9 @@ func _setup_GI_pipeline():
 	$LastFrameBuffer.set_size(get_viewport().size)
 	
 	$BackBuffer.set_shader_param("resolution", get_viewport().size)
-	$BackBuffer.set_shader_param("occlusion_data", $DistanceField.get_texture())
-	$BackBuffer.set_shader_param("emissive_data", $SceneBuffer.get_texture())
-	$BackBuffer.set_shader_param("colour_data", $SceneBuffer.get_texture())
+	$BackBuffer.set_shader_param("distance_data", $DistanceField.get_texture())
+	$BackBuffer.set_shader_param("scene_data", $SceneBuffer.get_texture())
 	$BackBuffer.set_shader_param("last_frame_data", $LastFrameBuffer.get_texture())
+	$BackBuffer.set_shader_param("dist_mod", 10.0)
 	
 """ PUBLIC """
