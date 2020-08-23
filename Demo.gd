@@ -13,6 +13,7 @@ var _frame = 0
 var _voronoi_buffers = []
 var _ball_timer = 0.0
 var _main_scene = null
+var _light = null
 var _rng
 
 """ PUBLIC """
@@ -45,6 +46,7 @@ func _ready():
 		
 	# output to screen
 	$CanvasLayer/Screen.get_material().set_shader_param("texture_to_draw", $BackBuffer.get_texture())
+	#$CanvasLayer/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[_voronoi_buffers.size() - 1].get_texture())
 	
 	$DebugRTT/SceneDebug.texture = $SceneBuffer.get_texture()
 	$DebugRTT/LastFrameDebug.texture = $LastFrameBuffer.get_texture()
@@ -53,6 +55,7 @@ func _ready():
 	$DebugRTT/DistanceFieldDebug.texture = $DistanceField.get_texture()
 	
 	_main_scene = $MainScene
+	_light = $MainScene/Light
 	var pinjoint = $MainScene/PinJoint2D
 	remove_child($MainScene)
 	$SceneBuffer.add_child(_main_scene)
@@ -64,6 +67,7 @@ func _process(delta):
 	_ball_timer -= delta
 	if Input.is_action_pressed("ui_click"):
 		
+		"""
 		if _ball_timer < 0.0:
 			var ball = ball_scene.instance()
 			_main_scene.add_child(ball)
@@ -87,11 +91,9 @@ func _process(delta):
 			#ball.position = Vector2(_rng.randf_range(15.0, get_viewport().size.x - 15.0), 25.0)
 			ball.position = get_global_mouse_position()
 			_ball_timer = ball_frequency
+		"""
 		
-		#var mouse_pos = get_global_mouse_position() / get_viewport().size
-		#var aspect = get_viewport().size.x / get_viewport().size.y
-		#mouse_pos.x *= aspect
-		#$BackBuffer.set_shader_param("LIGHT_POS", -mouse_pos)
+		_light.position = get_global_mouse_position()
 	
 	$BackBuffer.set_shader_param("frame", _frame)
 	_frame += 1

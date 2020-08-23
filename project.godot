@@ -19,11 +19,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://RenderTarget.gd"
 }, {
-"base": "Viewport",
-"class": "VoronoiBuffer",
-"language": "GDScript",
-"path": "res://VoronoiBuffer.gd"
-}, {
 "base": "Node",
 "class": "XXX",
 "language": "GDScript",
@@ -32,7 +27,6 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "Demo": "",
 "RenderTarget": "",
-"VoronoiBuffer": "",
 "XXX": ""
 }
 
@@ -46,8 +40,8 @@ config/icon="res://icon.png"
 
 window/size/width=512
 window/size/height=512
-window/size/test_width=512
-window/size/test_height=512
+window/size/test_width=1024
+window/size/test_height=1024
 window/vsync/use_vsync=false
 window/stretch/mode="viewport"
 window/stretch/aspect="keep"
@@ -63,6 +57,5 @@ ui_click={
 [rendering]
 
 environment/default_clear_color=Color( 0, 0, 0, 1 )
-environment/default_environment="res://default_env.tres"
 environment/size/height=256
 environment/size/width=256
