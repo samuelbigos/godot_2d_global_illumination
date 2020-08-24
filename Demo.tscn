@@ -13,21 +13,6 @@
 [ext_resource path="res://shaders/VoronoiSeed.shader" type="Shader" id=11]
 [ext_resource path="res://shaders/DistanceField.shader" type="Shader" id=12]
 
-[sub_resource type="ShaderMaterial" id=1]
-resource_local_to_scene = true
-render_priority = 1
-shader = ExtResource( 3 )
-shader_param/PI = 3.1416
-shader_param/resolution = null
-shader_param/rays_per_pixel = 32.0
-shader_param/dist_mod = 2.0
-shader_param/noise_data = ExtResource( 5 )
-
-[sub_resource type="ShaderMaterial" id=2]
-resource_local_to_scene = true
-render_priority = 1
-shader = ExtResource( 9 )
-
 [sub_resource type="ViewportTexture" id=3]
 
 [sub_resource type="ShaderMaterial" id=4]
@@ -60,6 +45,21 @@ resource_local_to_scene = true
 shader = ExtResource( 12 )
 shader_param/dist_mod = 2.0
 
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+render_priority = 1
+shader = ExtResource( 9 )
+
+[sub_resource type="ShaderMaterial" id=1]
+resource_local_to_scene = true
+render_priority = 1
+shader = ExtResource( 3 )
+shader_param/PI = 3.1416
+shader_param/resolution = null
+shader_param/rays_per_pixel = 32.0
+shader_param/dist_mod = 2.0
+shader_param/noise_data = ExtResource( 5 )
+
 [sub_resource type="RectangleShape2D" id=10]
 extents = Vector2( 0.5, 0.5 )
 
@@ -74,12 +74,6 @@ script = ExtResource( 4 )
 voronoi_buffer_scene = ExtResource( 7 )
 ball_scene = ExtResource( 6 )
 
-[node name="BackBuffer" parent="." instance=ExtResource( 1 )]
-material = SubResource( 1 )
-
-[node name="LastFrameBuffer" parent="." instance=ExtResource( 1 )]
-material = SubResource( 2 )
-
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Screen" type="TextureRect" parent="CanvasLayer"]
@@ -92,7 +86,47 @@ __meta__ = {
 
 [node name="DebugRTT" type="CanvasLayer" parent="."]
 
+[node name="SceneDebug" type="TextureRect" parent="DebugRTT"]
+margin_right = 128.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 128, 128 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VoronoiSeedDebug" type="TextureRect" parent="DebugRTT"]
+margin_left = 128.0
+margin_right = 256.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 128, 128 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VoronoiDebug" type="TextureRect" parent="DebugRTT"]
+margin_left = 256.0
+margin_right = 384.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 128, 128 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DistanceFieldDebug" type="TextureRect" parent="DebugRTT"]
+margin_left = 384.0
+margin_right = 512.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 128, 128 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="BG" type="TextureRect" parent="DebugRTT"]
+visible = false
 modulate = Color( 0, 0, 0, 1 )
 texture = ExtResource( 2 )
 expand = true
@@ -101,33 +135,6 @@ __meta__ = {
 }
 
 [node name="LastFrameDebug" type="TextureRect" parent="DebugRTT"]
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="SceneDebug" type="TextureRect" parent="DebugRTT"]
-visible = false
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="VoronoiSeedDebug" type="TextureRect" parent="DebugRTT"]
-visible = false
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="VoronoiDebug" type="TextureRect" parent="DebugRTT"]
-visible = false
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="DistanceFieldDebug" type="TextureRect" parent="DebugRTT"]
 visible = false
 expand = true
 __meta__ = {
@@ -170,6 +177,12 @@ margin_right = 40.0
 margin_bottom = 40.0
 texture = ExtResource( 2 )
 expand = true
+
+[node name="LastFrameBuffer" parent="." instance=ExtResource( 1 )]
+material = SubResource( 2 )
+
+[node name="BackBuffer" parent="." instance=ExtResource( 1 )]
+material = SubResource( 1 )
 
 [node name="MainScene" type="Node2D" parent="."]
 

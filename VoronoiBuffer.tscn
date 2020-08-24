@@ -6,7 +6,6 @@
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
-render_priority = 1
 shader = ExtResource( 1 )
 shader_param/i_offset = 0.0
 shader_param/i_level = 0.0

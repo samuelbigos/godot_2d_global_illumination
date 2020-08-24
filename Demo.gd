@@ -15,7 +15,7 @@ var _main_scene = null
 var _light = null
 var _rng
 
-var _update_time = 0.0
+var _update_time = 2.0
 var _gi_update_timer = 0.0
 var _last_update_timer = _update_time * 0.5
 
@@ -37,12 +37,14 @@ func _ready():
 	_rng.randomize()
 
 	$CanvasLayer/Screen.rect_size = get_viewport().size
-	$DebugRTT/BG.rect_size = get_viewport().size * 0.5
-	$DebugRTT/SceneDebug.rect_size = get_viewport().size * 0.5
-	$DebugRTT/LastFrameDebug.rect_size = get_viewport().size * 0.5
-	$DebugRTT/VoronoiDebug.rect_size = get_viewport().size * 0.5
-	$DebugRTT/VoronoiSeedDebug.rect_size = get_viewport().size * 0.5
-	$DebugRTT/DistanceFieldDebug.rect_size = get_viewport().size * 0.5
+
+	#$DebugRTT/BG.rect_size = get_viewport().size * 0.5
+	#$DebugRTT/SceneDebug.rect_size = get_viewport().size * 0.5
+	#$DebugRTT/LastFrameDebug.rect_size = get_viewport().size * 0.5
+	#$DebugRTT/VoronoiDebug.rect_size = get_viewport().size * 0.5
+	#$DebugRTT/VoronoiSeedDebug.rect_size = get_viewport().size * 0.5
+	#$DebugRTT/DistanceFieldDebug.rect_size = get_viewport().size * 0.5
+	
 	$SceneBuffer.set_size(get_viewport().size)
 	
 	_setup_voronoi_pipeline()
@@ -55,8 +57,8 @@ func _ready():
 	$DebugRTT/SceneDebug.texture = $SceneBuffer.get_texture()
 	$DebugRTT/LastFrameDebug.texture = $LastFrameBuffer.get_texture()
 	$DebugRTT/VoronoiDebug.texture = _voronoi_buffers[_voronoi_buffers.size() - 1].get_texture()
-	$DebugRTT/VoronoiSeedDebug.texture = $VoronoiSeed.get_texture()
 	$DebugRTT/DistanceFieldDebug.texture = $DistanceField.get_texture()
+	$DebugRTT/VoronoiSeedDebug.texture = $VoronoiSeed.get_texture()
 	
 	_main_scene = $MainScene
 	_light = $MainScene/Light
@@ -65,6 +67,22 @@ func _ready():
 	$SceneBuffer.add_child(_main_scene)
 	pinjoint.node_a = pinjoint.get_children()[0].get_path()
 	pinjoint.node_b = pinjoint.get_children()[1].get_path()
+	
+	# set correct render pass order
+	var index = 0
+	move_child($SceneBuffer, index)
+	index += 1
+	move_child($VoronoiSeed, index)
+	index += 1
+	for i in _voronoi_buffers:
+		move_child(i, index)
+		index += 1
+	move_child($DistanceField, index)
+	index += 1
+	move_child($LastFrameBuffer, index)
+	index += 1
+	move_child($BackBuffer, index)
+	index += 1
 	
 func _process(delta):
 	
@@ -100,21 +118,28 @@ func _process(delta):
 		_light.position = get_global_mouse_position()
 	
 	$DebugRTT/Label.text = String(Engine.get_frames_per_second())
+	$DebugRTT/Label.text = String(_gi_update_timer)
 	
 	_gi_update_timer -= delta
 	if _gi_update_timer < 0.0:
+		$SceneBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
+		$BackBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
+		$VoronoiSeed.render_target_update_mode = Viewport.UPDATE_ONCE
+		for i in _voronoi_buffers:
+			i.render_target_update_mode = Viewport.UPDATE_ONCE
+		$DistanceField.render_target_update_mode = Viewport.UPDATE_ONCE
+		$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 		$BackBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 		_gi_update_timer = _update_time
 		
 	_last_update_timer -= delta
 	if _last_update_timer < 0.0:
-		$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
+		#$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 		_last_update_timer = _update_time
 		
 func _setup_voronoi_pipeline():
 	
 	# voronoi
-	$VoronoiSeed.render_target_update_mode = Viewport.UPDATE_ALWAYS
 	$VoronoiSeed.set_size(get_viewport().size)
 	$VoronoiSeed/Texture.rect_size = get_viewport().size
 		
@@ -134,21 +159,17 @@ func _setup_voronoi_pipeline():
 		#print("setup voronoi with offset %d" % [offset])
 	
 	# distance field
-	$DistanceField.render_target_update_mode = Viewport.UPDATE_ALWAYS
 	$DistanceField.set_size(get_viewport().size)
 	$DistanceField/Texture.rect_size = get_viewport().size
 	
 	$DistanceField/Texture.get_material().set_shader_param("input_tex", _voronoi_buffers[passes - 1].get_texture())
-	$DistanceField/Texture.get_material().set_shader_param("scene_tex", $SceneBuffer.get_texture())
 	$DistanceField/Texture.get_material().set_shader_param("dist_mod", 10.0)
 	
 func _setup_GI_pipeline():
 
-	# GI
-	
+	# GI	
 	$LastFrameBuffer.set_size(get_viewport().size)
 	$LastFrameBuffer.set_shader_param("texture_to_draw", $BackBuffer.get_texture())
-	#$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 	
 	$BackBuffer.set_size(get_viewport().size)	
 	$BackBuffer.set_shader_param("resolution", get_viewport().size)
@@ -156,6 +177,5 @@ func _setup_GI_pipeline():
 	$BackBuffer.set_shader_param("scene_data", $SceneBuffer.get_texture())
 	$BackBuffer.set_shader_param("last_frame_data", $LastFrameBuffer.get_texture())
 	$BackBuffer.set_shader_param("dist_mod", 10.0)
-	#$BackBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 	
 """ PUBLIC """
