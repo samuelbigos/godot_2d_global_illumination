@@ -13,44 +13,43 @@
 [ext_resource path="res://shaders/VoronoiSeed.shader" type="Shader" id=11]
 [ext_resource path="res://shaders/DistanceField.shader" type="Shader" id=12]
 
-[sub_resource type="ViewportTexture" id=3]
+[sub_resource type="ViewportTexture" id=1]
 
-[sub_resource type="ShaderMaterial" id=4]
+[sub_resource type="ShaderMaterial" id=2]
 resource_local_to_scene = true
-render_priority = 1
 shader = ExtResource( 10 )
-shader_param/sRGB = false
+shader_param/sRGB = true
 shader_param/min_alpha = 1.0
-shader_param/texture_to_draw = SubResource( 3 )
+shader_param/texture_to_draw = SubResource( 1 )
 
-[sub_resource type="DynamicFontData" id=5]
+[sub_resource type="DynamicFontData" id=3]
 antialiased = false
 font_path = "res://Toy.ttf"
 
-[sub_resource type="DynamicFont" id=6]
+[sub_resource type="DynamicFont" id=4]
 size = 48
 outline_size = 1
-font_data = SubResource( 5 )
+font_data = SubResource( 3 )
 
-[sub_resource type="ViewportTexture" id=7]
+[sub_resource type="ViewportTexture" id=5]
 viewport_path = NodePath("SceneBuffer")
 
-[sub_resource type="ShaderMaterial" id=8]
+[sub_resource type="ShaderMaterial" id=6]
 resource_local_to_scene = true
 shader = ExtResource( 11 )
-shader_param/input_tex = SubResource( 7 )
+shader_param/input_tex = SubResource( 5 )
 
-[sub_resource type="ShaderMaterial" id=9]
+[sub_resource type="ShaderMaterial" id=7]
 resource_local_to_scene = true
 shader = ExtResource( 12 )
 shader_param/dist_mod = 2.0
 
-[sub_resource type="ShaderMaterial" id=2]
+[sub_resource type="ShaderMaterial" id=8]
 resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource( 9 )
 
-[sub_resource type="ShaderMaterial" id=1]
+[sub_resource type="ShaderMaterial" id=9]
 resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource( 3 )
@@ -74,10 +73,10 @@ script = ExtResource( 4 )
 voronoi_buffer_scene = ExtResource( 7 )
 ball_scene = ExtResource( 6 )
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="Screen" type="CanvasLayer" parent="."]
 
-[node name="Screen" type="TextureRect" parent="CanvasLayer"]
-material = SubResource( 4 )
+[node name="Screen" type="TextureRect" parent="Screen"]
+material = SubResource( 2 )
 texture = ExtResource( 2 )
 expand = true
 __meta__ = {
@@ -86,7 +85,29 @@ __meta__ = {
 
 [node name="DebugRTT" type="CanvasLayer" parent="."]
 
+[node name="BG" type="TextureRect" parent="DebugRTT"]
+modulate = Color( 0, 0, 0, 1 )
+margin_right = 256.0
+margin_bottom = 256.0
+rect_min_size = Vector2( 256, 256 )
+texture = ExtResource( 2 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="SceneDebug" type="TextureRect" parent="DebugRTT"]
+visible = false
+margin_right = 128.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 128, 128 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EmissiveDebug" type="TextureRect" parent="DebugRTT"]
+visible = false
 margin_right = 128.0
 margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
@@ -96,6 +117,7 @@ __meta__ = {
 }
 
 [node name="VoronoiSeedDebug" type="TextureRect" parent="DebugRTT"]
+visible = false
 margin_left = 128.0
 margin_right = 256.0
 margin_bottom = 128.0
@@ -106,6 +128,7 @@ __meta__ = {
 }
 
 [node name="VoronoiDebug" type="TextureRect" parent="DebugRTT"]
+visible = false
 margin_left = 256.0
 margin_right = 384.0
 margin_bottom = 128.0
@@ -116,6 +139,7 @@ __meta__ = {
 }
 
 [node name="DistanceFieldDebug" type="TextureRect" parent="DebugRTT"]
+visible = false
 margin_left = 384.0
 margin_right = 512.0
 margin_bottom = 128.0
@@ -125,17 +149,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="BG" type="TextureRect" parent="DebugRTT"]
-visible = false
-modulate = Color( 0, 0, 0, 1 )
-texture = ExtResource( 2 )
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="LastFrameDebug" type="TextureRect" parent="DebugRTT"]
-visible = false
+margin_right = 128.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 256, 256 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -146,7 +163,7 @@ margin_left = 7.0
 margin_top = -9.0
 margin_right = 67.0
 margin_bottom = 26.0
-custom_fonts/font = SubResource( 6 )
+custom_fonts/font = SubResource( 4 )
 custom_colors/font_color = Color( 1, 0, 0.556863, 1 )
 custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
 text = "00000"
@@ -155,15 +172,26 @@ __meta__ = {
 }
 
 [node name="SceneBuffer" type="Viewport" parent="."]
+transparent_bg = true
 render_target_v_flip = true
 render_target_update_mode = 3
+
+[node name="EmissiveMap" type="Viewport" parent="."]
+render_target_v_flip = true
+render_target_update_mode = 3
+
+[node name="EmissiveScene" type="Node2D" parent="EmissiveMap"]
+
+[node name="Light" type="Sprite" parent="EmissiveMap/EmissiveScene"]
+position = Vector2( 247.686, 97.9397 )
+texture = ExtResource( 8 )
 
 [node name="VoronoiSeed" type="Viewport" parent="."]
 render_target_v_flip = true
 render_target_update_mode = 3
 
 [node name="Texture" type="TextureRect" parent="VoronoiSeed"]
-material = SubResource( 8 )
+material = SubResource( 6 )
 texture = ExtResource( 2 )
 expand = true
 
@@ -172,26 +200,29 @@ render_target_v_flip = true
 render_target_update_mode = 3
 
 [node name="Texture" type="TextureRect" parent="DistanceField"]
-material = SubResource( 9 )
+material = SubResource( 7 )
 margin_right = 40.0
 margin_bottom = 40.0
 texture = ExtResource( 2 )
 expand = true
 
 [node name="LastFrameBuffer" parent="." instance=ExtResource( 1 )]
-material = SubResource( 2 )
+transparent_bg = true
+material = SubResource( 8 )
 
 [node name="BackBuffer" parent="." instance=ExtResource( 1 )]
-material = SubResource( 1 )
+transparent_bg = true
+material = SubResource( 9 )
 
 [node name="MainScene" type="Node2D" parent="."]
 
 [node name="Light" type="Sprite" parent="MainScene"]
+modulate = Color( 1, 0, 0, 1 )
 position = Vector2( 247.686, 97.9397 )
 texture = ExtResource( 8 )
 
 [node name="Top" type="Sprite" parent="MainScene"]
-modulate = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
+modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 256.454, 1.01888 )
 scale = Vector2( 512.295, 16.0118 )
 texture = ExtResource( 2 )
@@ -202,7 +233,7 @@ texture = ExtResource( 2 )
 shape = SubResource( 10 )
 
 [node name="Right" type="Sprite" parent="MainScene"]
-modulate = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
+modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 511.46, 256.093 )
 scale = Vector2( 12.5267, 517.877 )
 texture = ExtResource( 2 )
@@ -213,7 +244,7 @@ texture = ExtResource( 2 )
 shape = SubResource( 10 )
 
 [node name="Left" type="Sprite" parent="MainScene"]
-modulate = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
+modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 0.460298, 256.093 )
 scale = Vector2( 12.5267, 517.877 )
 texture = ExtResource( 2 )
@@ -224,7 +255,7 @@ texture = ExtResource( 2 )
 shape = SubResource( 10 )
 
 [node name="BottomL" type="Sprite" parent="MainScene"]
-modulate = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
+modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 155.172, 501.475 )
 rotation = -0.349066
 scale = Vector2( 231.669, 14.9783 )
@@ -239,7 +270,7 @@ __meta__ = {
 shape = SubResource( 10 )
 
 [node name="BottomR" type="Sprite" parent="MainScene"]
-modulate = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
+modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 362.244, 499.731 )
 rotation = 0.349066
 scale = Vector2( 220.704, 14.9783 )
@@ -254,7 +285,7 @@ __meta__ = {
 shape = SubResource( 10 )
 
 [node name="Slope" type="Sprite" parent="MainScene"]
-modulate = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
+modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 164.619, 129.051 )
 rotation = 0.337157
 scale = Vector2( 94.2088, 14.9783 )
@@ -269,7 +300,7 @@ __meta__ = {
 shape = SubResource( 10 )
 
 [node name="Slope2" type="Sprite" parent="MainScene"]
-modulate = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
+modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 372.194, 181.936 )
 rotation = -0.342801
 scale = Vector2( 87.5397, 14.9783 )
@@ -284,7 +315,7 @@ __meta__ = {
 shape = SubResource( 10 )
 
 [node name="Slope3" type="Sprite" parent="MainScene"]
-modulate = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
+modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 54.8245, 249.672 )
 rotation = 0.397218
 scale = Vector2( 131.135, 14.9783 )
@@ -299,7 +330,7 @@ __meta__ = {
 shape = SubResource( 10 )
 
 [node name="Slope4" type="Sprite" parent="MainScene"]
-modulate = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
+modulate = Color( 0, 0, 0, 1 )
 position = Vector2( 460.619, 329.218 )
 rotation = -0.277588
 scale = Vector2( 121.049, 14.9783 )
