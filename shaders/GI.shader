@@ -9,7 +9,6 @@ uniform sampler2D scene_data;
 uniform sampler2D last_frame_data;
 uniform sampler2D noise_data;
 uniform float dist_mod;
-uniform int frame;
 
 float epsilon()
 {
@@ -21,12 +20,12 @@ void get_material(vec2 uv, vec4 hit_data, out float emissive, out vec3 colour)
 	if(hit_data.x / dist_mod < epsilon())
 	{
 		vec4 mat_data = texture(scene_data, uv);
-		if(mat_data.x > 0.0 || mat_data.y > 0.0 || mat_data.z > 0.0)
-			emissive = 1.0;
+		if(mat_data.x > 1.0 / 255.0)
+			emissive = 4.0;
 		else
 			emissive = 0.0;
 		
-		emissive = mat_data.x * 4.0;
+		//emissive = mat_data.x * 4.0;
 		colour = mat_data.xyz;
 	}
 	else
@@ -68,15 +67,15 @@ bool raymarch(vec2 origin, vec2 ray, out vec2 hitPos, out vec4 hit_data, out flo
 float get_emission_from_buffer(vec2 uv)
 {
 	vec2 pix = 1.0 / resolution.xy;
-	float e = max(texture(last_frame_data, uv + pix * vec2(-1,1)).a,0.);
-	e = max(max(texture(last_frame_data, uv + pix * vec2(0,1)).a,0.),e);
-	e = max(max(texture(last_frame_data, uv + pix * vec2(1,1)).a,0.),e);
-	e = max(max(texture(last_frame_data, uv + pix * vec2(-1,0)).a,0.),e);
-	e = max(max(texture(last_frame_data, uv + pix * vec2(0,0)).a,0.),e);
-	e = max(max(texture(last_frame_data, uv + pix * vec2(1,0)).a,0.),e);
-	e = max(max(texture(last_frame_data, uv + pix * vec2(-1,-1)).a,0.),e);
-	e = max(max(texture(last_frame_data, uv + pix * vec2(0,-1)).a,0.),e);
-	e = max(max(texture(last_frame_data, uv + pix * vec2(1,-1)).a,0.),e);
+	float e = max(texture(last_frame_data, uv + pix * vec2(-1,1)).r,0.);
+	e = max(max(texture(last_frame_data, uv + pix * vec2(0,1)).r,0.),e);
+	e = max(max(texture(last_frame_data, uv + pix * vec2(1,1)).r,0.),e);
+	e = max(max(texture(last_frame_data, uv + pix * vec2(-1,0)).r,0.),e);
+	e = max(max(texture(last_frame_data, uv + pix * vec2(0,0)).r,0.),e);
+	e = max(max(texture(last_frame_data, uv + pix * vec2(1,0)).r,0.),e);
+	e = max(max(texture(last_frame_data, uv + pix * vec2(-1,-1)).r,0.),e);
+	e = max(max(texture(last_frame_data, uv + pix * vec2(0,-1)).r,0.),e);
+	e = max(max(texture(last_frame_data, uv + pix * vec2(1,-1)).r,0.),e);
 	return e;
 }
 
@@ -113,12 +112,10 @@ void fragment()
 			st.x *= invAspect;
 			
 			highp float last_emission = 0.0;
-			if(mat_emissive <= epsilon())
+			if(mat_emissive == 0.0)
 			{
 				last_emission = get_emission_from_buffer(st);
 			}
-			if(frame == 0)
-				last_emission = 0.0;
 			if(d <= epsilon())
 				last_emission = 0.0;
 			

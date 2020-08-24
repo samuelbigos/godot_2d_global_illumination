@@ -21,7 +21,6 @@ shader_param/PI = 3.1416
 shader_param/resolution = null
 shader_param/rays_per_pixel = 32.0
 shader_param/dist_mod = 2.0
-shader_param/frame = null
 shader_param/noise_data = ExtResource( 5 )
 
 [sub_resource type="ShaderMaterial" id=2]

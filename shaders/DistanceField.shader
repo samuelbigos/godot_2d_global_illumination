@@ -1,7 +1,6 @@
 shader_type canvas_item;
 
 uniform sampler2D input_tex;
-uniform sampler2D scene_tex;
 uniform float dist_mod = 2.0;
 
 void fragment() 
