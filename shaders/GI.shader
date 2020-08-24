@@ -22,7 +22,7 @@ void get_material(vec2 uv, vec4 hit_data, out float emissive, out vec3 colour)
 	{
 		vec4 emissive_data = texture(scene_emissive_data, uv);
 		vec4 colour_data = texture(scene_colour_data, uv);
-		emissive = emissive_data.r * 4.0;
+		emissive = emissive_data.r * 1.0;
 		colour = colour_data.rgb;
 	}
 	else

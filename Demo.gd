@@ -23,7 +23,7 @@ var _last_update_timer = _update_time * 0.5
 
 export var voronoi_buffer_scene : PackedScene = null
 export var ball_scene : PackedScene = null
-export var ball_frequency = 0.025
+export var ball_frequency = 0.05
 
 ###########
 # METHODS #
@@ -46,7 +46,6 @@ func _ready():
 	#$DebugRTT/DistanceFieldDebug.rect_size = get_viewport().size * 0.5
 	
 	$SceneBuffer.set_size(get_viewport().size)
-	$EmissiveMap.set_size(get_viewport().size)
 	
 	_setup_voronoi_pipeline()
 	_setup_GI_pipeline()
@@ -56,7 +55,8 @@ func _ready():
 	#$Screen/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[_voronoi_buffers.size() - 1].get_texture())
 	
 	$DebugRTT/SceneDebug.texture = $SceneBuffer.get_texture()
-	$DebugRTT/EmissiveDebug.texture = $EmissiveMap.get_texture()
+	$DebugRTT/EmissiveDebug.texture = GI.emissive_map.get_texture()
+	$DebugRTT/AlbedoDebug.texture = GI.albedo_map.get_texture()
 	$DebugRTT/LastFrameDebug.texture = $LastFrameBuffer.get_texture()
 	$DebugRTT/VoronoiDebug.texture = _voronoi_buffers[_voronoi_buffers.size() - 1].get_texture()
 	$DebugRTT/DistanceFieldDebug.texture = $DistanceField.get_texture()
@@ -64,15 +64,12 @@ func _ready():
 	
 	_main_scene = $MainScene
 	_light = $MainScene/Light
-	var pinjoint = $MainScene/PinJoint2D
 	remove_child($MainScene)
 	$SceneBuffer.add_child(_main_scene)
-	pinjoint.node_a = pinjoint.get_children()[0].get_path()
-	pinjoint.node_b = pinjoint.get_children()[1].get_path()
 	
 	# set correct render pass order
-	VisualServer.viewport_set_active($EmissiveMap.get_viewport_rid(), false)
-	VisualServer.viewport_set_active($EmissiveMap.get_viewport_rid(), true)
+	VisualServer.viewport_set_active(GI.emissive_map.get_viewport_rid(), false)
+	VisualServer.viewport_set_active(GI.emissive_map.get_viewport_rid(), true)
 	VisualServer.viewport_set_active($SceneBuffer.get_viewport_rid(), false)
 	VisualServer.viewport_set_active($SceneBuffer.get_viewport_rid(), true)
 	VisualServer.viewport_set_active($VoronoiSeed.get_viewport_rid(), false)
@@ -92,7 +89,7 @@ func _process(delta):
 	_ball_timer -= delta
 	if Input.is_action_pressed("ui_click"):
 		
-		if false:
+		if true:
 			if _ball_timer < 0.0:
 				var ball = ball_scene.instance()
 				_main_scene.add_child(ball)
@@ -112,22 +109,23 @@ func _process(delta):
 						
 				var colour = Vector3(_rng.randf(), _rng.randf(), _rng.randf()).normalized()
 				sprite.modulate = Color(colour.x, colour.y, colour.z)
-				sprite.modulate = Color.white
-				
+				sprite.set_emissive(1.0)
+				sprite.set_albedo(sprite.modulate)
+			
 				#ball.position = Vector2(_rng.randf_range(15.0, get_viewport().size.x - 15.0), 25.0)
 				ball.position = get_global_mouse_position()
 				_ball_timer = ball_frequency
-			
-		_light.position = get_global_mouse_position()
-		$EmissiveMap/EmissiveScene/Light.position = get_global_mouse_position()
-	
+				
+		#_light.position = get_global_mouse_position()
+				
 	$DebugRTT/Label.text = String(Engine.get_frames_per_second())
 	#$DebugRTT/Label.text = String(_gi_update_timer)
 	
 	_gi_update_timer -= delta
 	if _gi_update_timer < 0.0:
 		$SceneBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
-		$EmissiveMap.render_target_update_mode = Viewport.UPDATE_ONCE
+		GI.emissive_map.render_target_update_mode = Viewport.UPDATE_ONCE
+		GI.albedo_map.render_target_update_mode = Viewport.UPDATE_ONCE
 		$BackBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 		$VoronoiSeed.render_target_update_mode = Viewport.UPDATE_ONCE
 		for i in _voronoi_buffers:
@@ -179,8 +177,8 @@ func _setup_GI_pipeline():
 	$BackBuffer.set_size(get_viewport().size)	
 	$BackBuffer.set_shader_param("resolution", get_viewport().size)
 	$BackBuffer.set_shader_param("distance_data", $DistanceField.get_texture())
-	$BackBuffer.set_shader_param("scene_colour_data", $SceneBuffer.get_texture())
-	$BackBuffer.set_shader_param("scene_emissive_data", $EmissiveMap.get_texture())
+	$BackBuffer.set_shader_param("scene_colour_data", GI.albedo_map.get_texture())
+	$BackBuffer.set_shader_param("scene_emissive_data", GI.emissive_map.get_texture())
 	$BackBuffer.set_shader_param("last_frame_data", $LastFrameBuffer.get_texture())
 	$BackBuffer.set_shader_param("dist_mod", 10.0)
 	

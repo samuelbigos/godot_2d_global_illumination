@@ -12,6 +12,7 @@
 [ext_resource path="res://shaders/DrawTexture.shader" type="Shader" id=10]
 [ext_resource path="res://shaders/VoronoiSeed.shader" type="Shader" id=11]
 [ext_resource path="res://shaders/DistanceField.shader" type="Shader" id=12]
+[ext_resource path="res://GI_Sprite.gd" type="Script" id=13]
 
 [sub_resource type="ViewportTexture" id=1]
 
@@ -59,14 +60,11 @@ shader_param/rays_per_pixel = 32.0
 shader_param/dist_mod = 2.0
 shader_param/noise_data = ExtResource( 5 )
 
-[sub_resource type="RectangleShape2D" id=10]
-extents = Vector2( 0.5, 0.5 )
+[sub_resource type="CircleShape2D" id=13]
+radius = 9.49588
 
-[sub_resource type="CircleShape2D" id=11]
-radius = 3.79771
-
-[sub_resource type="RectangleShape2D" id=12]
-extents = Vector2( 80, 4 )
+[sub_resource type="RectangleShape2D" id=14]
+extents = Vector2( 0.49991, 0.49998 )
 
 [node name="Demo" type="Node2D"]
 script = ExtResource( 4 )
@@ -86,10 +84,11 @@ __meta__ = {
 [node name="DebugRTT" type="CanvasLayer" parent="."]
 
 [node name="BG" type="TextureRect" parent="DebugRTT"]
-modulate = Color( 0, 0, 0, 1 )
+visible = false
+modulate = Color( 0.27451, 0.27451, 0.27451, 1 )
 margin_right = 256.0
-margin_bottom = 256.0
-rect_min_size = Vector2( 256, 256 )
+margin_bottom = 128.0
+rect_min_size = Vector2( 256, 128 )
 texture = ExtResource( 2 )
 expand = true
 __meta__ = {
@@ -100,7 +99,7 @@ __meta__ = {
 visible = false
 margin_right = 128.0
 margin_bottom = 128.0
-rect_min_size = Vector2( 128, 128 )
+rect_min_size = Vector2( 256, 256 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -109,6 +108,17 @@ __meta__ = {
 [node name="EmissiveDebug" type="TextureRect" parent="DebugRTT"]
 visible = false
 margin_right = 128.0
+margin_bottom = 128.0
+rect_min_size = Vector2( 128, 128 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AlbedoDebug" type="TextureRect" parent="DebugRTT"]
+visible = false
+margin_left = 128.0
+margin_right = 256.0
 margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
 expand = true
@@ -150,6 +160,7 @@ __meta__ = {
 }
 
 [node name="LastFrameDebug" type="TextureRect" parent="DebugRTT"]
+visible = false
 margin_right = 128.0
 margin_bottom = 128.0
 rect_min_size = Vector2( 256, 256 )
@@ -175,16 +186,6 @@ __meta__ = {
 transparent_bg = true
 render_target_v_flip = true
 render_target_update_mode = 3
-
-[node name="EmissiveMap" type="Viewport" parent="."]
-render_target_v_flip = true
-render_target_update_mode = 3
-
-[node name="EmissiveScene" type="Node2D" parent="EmissiveMap"]
-
-[node name="Light" type="Sprite" parent="EmissiveMap/EmissiveScene"]
-position = Vector2( 247.686, 97.9397 )
-texture = ExtResource( 8 )
 
 [node name="VoronoiSeed" type="Viewport" parent="."]
 render_target_v_flip = true
@@ -217,152 +218,253 @@ material = SubResource( 9 )
 [node name="MainScene" type="Node2D" parent="."]
 
 [node name="Light" type="Sprite" parent="MainScene"]
-modulate = Color( 1, 0, 0, 1 )
-position = Vector2( 247.686, 97.9397 )
+texture = ExtResource( 8 )
+script = ExtResource( 13 )
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Light"]
 texture = ExtResource( 8 )
 
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Light"]
+texture = ExtResource( 8 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Light"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Light/StaticBody2D"]
+shape = SubResource( 13 )
+
 [node name="Top" type="Sprite" parent="MainScene"]
-modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 256.454, 1.01888 )
-scale = Vector2( 512.295, 16.0118 )
+position = Vector2( 256, 0 )
+scale = Vector2( 512, 16 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Top"]
+modulate = Color( 0.403922, 0.403922, 0.403922, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Top"]
+modulate = Color( 0.25098, 0.25098, 0.25098, 1 )
 texture = ExtResource( 2 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Top"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Top/StaticBody2D"]
-shape = SubResource( 10 )
+shape = SubResource( 14 )
 
-[node name="Right" type="Sprite" parent="MainScene"]
+[node name="Bottom" type="Sprite" parent="MainScene"]
+position = Vector2( 256, 512 )
+scale = Vector2( 512, 16 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Bottom"]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 511.46, 256.093 )
-scale = Vector2( 12.5267, 517.877 )
 texture = ExtResource( 2 )
 
-[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Right"]
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Bottom"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Right/StaticBody2D"]
-shape = SubResource( 10 )
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Bottom"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Bottom/StaticBody2D"]
+shape = SubResource( 14 )
+
+[node name="Slope1" type="Sprite" parent="MainScene"]
+position = Vector2( 94.8736, 107.968 )
+rotation = 0.275176
+scale = Vector2( 189.08, 9.16205 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Slope1"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Slope1"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope1"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope1/StaticBody2D"]
+shape = SubResource( 14 )
+
+[node name="Slope2" type="Sprite" parent="MainScene"]
+position = Vector2( 256.718, 170.134 )
+rotation = -0.318262
+scale = Vector2( 139.332, 9.16205 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Slope2"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Slope2"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope2/StaticBody2D"]
+shape = SubResource( 14 )
+
+[node name="Slope3" type="Sprite" parent="MainScene"]
+position = Vector2( 362.37, 96.6536 )
+rotation = 0.137486
+scale = Vector2( 205.844, 9.16205 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Slope3"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Slope3"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope3/StaticBody2D"]
+shape = SubResource( 14 )
+
+[node name="Slope4" type="Sprite" parent="MainScene"]
+position = Vector2( 440.458, 216.758 )
+rotation = -0.100502
+scale = Vector2( 131.839, 9.16205 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Slope4"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Slope4"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope4"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope4/StaticBody2D"]
+shape = SubResource( 14 )
+
+[node name="Slope5" type="Sprite" parent="MainScene"]
+position = Vector2( 187.095, 255.879 )
+rotation = 0.127267
+scale = Vector2( 235.513, 9.16205 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Slope5"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Slope5"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope5"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope5/StaticBody2D"]
+shape = SubResource( 14 )
+
+[node name="Slope6" type="Sprite" parent="MainScene"]
+position = Vector2( 361.808, 335.43 )
+rotation = 3.01758
+scale = Vector2( 177.354, 9.16205 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Slope6"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Slope6"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope6"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope6/StaticBody2D"]
+shape = SubResource( 14 )
+
+[node name="Slope7" type="Sprite" parent="MainScene"]
+position = Vector2( 208.229, 406.456 )
+rotation = 3.18042
+scale = Vector2( 277.957, 9.16205 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Slope7"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Slope7"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope7"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope7/StaticBody2D"]
+shape = SubResource( 14 )
 
 [node name="Left" type="Sprite" parent="MainScene"]
+position = Vector2( 0, 256 )
+scale = Vector2( 16, 512 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Left"]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 0.460298, 256.093 )
-scale = Vector2( 12.5267, 517.877 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Left"]
+modulate = Color( 0, 0.164706, 0.313726, 1 )
 texture = ExtResource( 2 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Left"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Left/StaticBody2D"]
-shape = SubResource( 10 )
+shape = SubResource( 14 )
 
-[node name="BottomL" type="Sprite" parent="MainScene"]
+[node name="Right" type="Sprite" parent="MainScene"]
+position = Vector2( 512, 256 )
+scale = Vector2( 16, 512 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Right"]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 155.172, 501.475 )
-rotation = -0.349066
-scale = Vector2( 231.669, 14.9783 )
 texture = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
 
-[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/BottomL"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/BottomL/StaticBody2D"]
-shape = SubResource( 10 )
-
-[node name="BottomR" type="Sprite" parent="MainScene"]
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Right"]
 modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 362.244, 499.731 )
-rotation = 0.349066
-scale = Vector2( 220.704, 14.9783 )
 texture = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
 
-[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/BottomR"]
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Right"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/BottomR/StaticBody2D"]
-shape = SubResource( 10 )
-
-[node name="Slope" type="Sprite" parent="MainScene"]
-modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 164.619, 129.051 )
-rotation = 0.337157
-scale = Vector2( 94.2088, 14.9783 )
-texture = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope/StaticBody2D"]
-shape = SubResource( 10 )
-
-[node name="Slope2" type="Sprite" parent="MainScene"]
-modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 372.194, 181.936 )
-rotation = -0.342801
-scale = Vector2( 87.5397, 14.9783 )
-texture = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope2"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope2/StaticBody2D"]
-shape = SubResource( 10 )
-
-[node name="Slope3" type="Sprite" parent="MainScene"]
-modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 54.8245, 249.672 )
-rotation = 0.397218
-scale = Vector2( 131.135, 14.9783 )
-texture = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope3/StaticBody2D"]
-shape = SubResource( 10 )
-
-[node name="Slope4" type="Sprite" parent="MainScene"]
-modulate = Color( 0, 0, 0, 1 )
-position = Vector2( 460.619, 329.218 )
-rotation = -0.277588
-scale = Vector2( 121.049, 14.9783 )
-texture = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
-
-[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope4"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope4/StaticBody2D"]
-shape = SubResource( 10 )
-
-[node name="PinJoint2D" type="PinJoint2D" parent="MainScene"]
-position = Vector2( 264, 310 )
-node_a = NodePath("StaticBody2D2")
-node_b = NodePath("StaticBody2D")
-
-[node name="StaticBody2D2" type="StaticBody2D" parent="MainScene/PinJoint2D"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/PinJoint2D/StaticBody2D2"]
-shape = SubResource( 11 )
-
-[node name="StaticBody2D" type="RigidBody2D" parent="MainScene/PinJoint2D"]
-angular_damp = 1.0
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/PinJoint2D/StaticBody2D"]
-shape = SubResource( 12 )
-
-[node name="Slope5" type="Sprite" parent="MainScene/PinJoint2D/StaticBody2D"]
-modulate = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
-position = Vector2( 0.00782882, 0.00306119 )
-rotation = 2.38419e-07
-scale = Vector2( 160, 7.886 )
-texture = ExtResource( 2 )
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Right/StaticBody2D"]
+shape = SubResource( 14 )
