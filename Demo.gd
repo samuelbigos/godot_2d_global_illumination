@@ -9,12 +9,15 @@ class_name Demo
 
 """ PRIVATE """
 
-var _frame = 0
 var _voronoi_buffers = []
 var _ball_timer = 0.0
 var _main_scene = null
 var _light = null
 var _rng
+
+var _update_time = 0.0
+var _gi_update_timer = 0.0
+var _last_update_timer = _update_time * 0.5
 
 """ PUBLIC """
 
@@ -34,6 +37,7 @@ func _ready():
 	_rng.randomize()
 
 	$CanvasLayer/Screen.rect_size = get_viewport().size
+	$DebugRTT/BG.rect_size = get_viewport().size * 0.5
 	$DebugRTT/SceneDebug.rect_size = get_viewport().size * 0.5
 	$DebugRTT/LastFrameDebug.rect_size = get_viewport().size * 0.5
 	$DebugRTT/VoronoiDebug.rect_size = get_viewport().size * 0.5
@@ -95,10 +99,17 @@ func _process(delta):
 		
 		_light.position = get_global_mouse_position()
 	
-	$BackBuffer.set_shader_param("frame", _frame)
-	_frame += 1
-	
 	$DebugRTT/Label.text = String(Engine.get_frames_per_second())
+	
+	_gi_update_timer -= delta
+	if _gi_update_timer < 0.0:
+		$BackBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
+		_gi_update_timer = _update_time
+		
+	_last_update_timer -= delta
+	if _last_update_timer < 0.0:
+		$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
+		_last_update_timer = _update_time
 		
 func _setup_voronoi_pipeline():
 	
@@ -134,13 +145,17 @@ func _setup_voronoi_pipeline():
 func _setup_GI_pipeline():
 
 	# GI
-	$BackBuffer.set_size(get_viewport().size)	
-	$LastFrameBuffer.set_size(get_viewport().size)
 	
+	$LastFrameBuffer.set_size(get_viewport().size)
+	$LastFrameBuffer.set_shader_param("texture_to_draw", $BackBuffer.get_texture())
+	#$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
+	
+	$BackBuffer.set_size(get_viewport().size)	
 	$BackBuffer.set_shader_param("resolution", get_viewport().size)
 	$BackBuffer.set_shader_param("distance_data", $DistanceField.get_texture())
 	$BackBuffer.set_shader_param("scene_data", $SceneBuffer.get_texture())
-	$BackBuffer.set_shader_param("last_frame_data", $LastFrameBuffer.get_texture())
+	#$BackBuffer.set_shader_param("last_frame_data", $LastFrameBuffer.get_texture())
 	$BackBuffer.set_shader_param("dist_mod", 10.0)
+	#$BackBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 	
 """ PUBLIC """

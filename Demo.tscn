@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://RenderTarget.tscn" type="PackedScene" id=1]
 [ext_resource path="res://1px.png" type="Texture" id=2]
@@ -16,16 +16,11 @@
 resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource( 3 )
-shader_param/LIGHT_POS = Vector2( 0, 0 )
 shader_param/PI = 3.1416
 shader_param/resolution = null
-shader_param/rays_per_pixel = 24.0
-shader_param/frame = 0
+shader_param/rays_per_pixel = 32.0
 shader_param/dist_mod = 2.0
 shader_param/noise_data = ExtResource( 5 )
-
-[sub_resource type="ViewportTexture" id=2]
-viewport_path = NodePath("BackBuffer")
 
 [sub_resource type="ShaderMaterial" id=3]
 resource_local_to_scene = true
@@ -33,7 +28,6 @@ render_priority = 1
 shader = ExtResource( 10 )
 shader_param/sRGB = false
 shader_param/min_alpha = 0.0
-shader_param/texture_to_draw = SubResource( 2 )
 
 [sub_resource type="ViewportTexture" id=4]
 
@@ -41,7 +35,7 @@ shader_param/texture_to_draw = SubResource( 2 )
 resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource( 10 )
-shader_param/sRGB = true
+shader_param/sRGB = false
 shader_param/min_alpha = 1.0
 shader_param/texture_to_draw = SubResource( 4 )
 
@@ -99,14 +93,21 @@ __meta__ = {
 
 [node name="DebugRTT" type="CanvasLayer" parent="."]
 
-[node name="SceneDebug" type="TextureRect" parent="DebugRTT"]
-visible = false
+[node name="BG" type="TextureRect" parent="DebugRTT"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="LastFrameDebug" type="TextureRect" parent="DebugRTT"]
+expand = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SceneDebug" type="TextureRect" parent="DebugRTT"]
 visible = false
 expand = true
 __meta__ = {
@@ -178,7 +179,7 @@ position = Vector2( 247.686, 97.9397 )
 texture = ExtResource( 8 )
 
 [node name="Top" type="Sprite" parent="MainScene"]
-modulate = Color( 0.0823529, 0.0823529, 0.0823529, 1 )
+modulate = Color( 0.00392157, 0.00392157, 0.00392157, 1 )
 position = Vector2( 256.454, 1.01888 )
 scale = Vector2( 512.295, 16.0118 )
 texture = ExtResource( 2 )

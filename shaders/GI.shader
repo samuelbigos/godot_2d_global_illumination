@@ -1,9 +1,6 @@
 shader_type canvas_item;
 
 // uniforms
-uniform vec2 LIGHT_POS = vec2(0.0, 0.0);
-
-// consts
 uniform float PI = 3.141596;
 uniform vec2 resolution;
 uniform float rays_per_pixel;
@@ -11,12 +8,11 @@ uniform sampler2D distance_data;
 uniform sampler2D scene_data;
 uniform sampler2D last_frame_data;
 uniform sampler2D noise_data;
-uniform int frame = 0;
 uniform float dist_mod;
 
 float epsilon()
 {
-	return 0.1 / resolution.x;
+	return 0.5 / resolution.x;
 }
 
 void get_material(vec2 uv, vec4 hit_data, out float emissive, out vec3 colour)
@@ -28,6 +24,8 @@ void get_material(vec2 uv, vec4 hit_data, out float emissive, out vec3 colour)
 			emissive = 1.0;
 		else
 			emissive = 0.0;
+		
+		emissive = mat_data.x * 4.0;
 		colour = mat_data.xyz;
 	}
 	else
@@ -78,7 +76,7 @@ float get_emission_from_buffer(vec2 uv)
 	e = max(max(texture(last_frame_data, uv + pix * vec2(-1,-1)).a,0.),e);
 	e = max(max(texture(last_frame_data, uv + pix * vec2(0,-1)).a,0.),e);
 	e = max(max(texture(last_frame_data, uv + pix * vec2(1,-1)).a,0.),e);
-	return e;
+	return 4.0;
 }
 
 void fragment() 
@@ -118,21 +116,21 @@ void fragment()
 			{
 				last_emission = get_emission_from_buffer(st);
 			}
-			if(frame == 0 || d <= epsilon())
-				last_emission = 0.0;
+			//if(d <= epsilon())
+			//	last_emission = 0.0;
 			
 			float emission = mat_emissive + last_emission;
 			float r = 2.;
-			float att = pow(max(1.0 - (d*d)/(r*r),0.),2.);
+			float att = 1.0;//pow(max(1.0 - (d*d)/(r*r),0.),2.);
 			emis += emission * att;
-			col += (mat_emissive + last_emission)*mat_colour*att;
+			col += (mat_emissive + last_emission) * mat_colour * att;
 		}
 	}
 	
 	col *= (1.0 / rays_per_pixel);
     emis *= (1.0 / rays_per_pixel);
 	
-	COLOR = vec4(vec3(col), emis);
+	COLOR = vec4(vec3(1.0), emis);
 
 	//COLOR = vec4(vec2(length(texture(in_data, uv).xy)), 0.0, 1.0);
 	/*
