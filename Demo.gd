@@ -14,8 +14,9 @@ var _ball_timer = 0.0
 var _main_scene = null
 var _light = null
 var _rng
+var _frame = 0
 
-var _update_time = 0.0
+var _update_time = 1.0
 var _gi_update_timer = 0.0
 var _last_update_timer = _update_time * 0.5
 
@@ -105,6 +106,8 @@ func _process(delta):
 	if _gi_update_timer < 0.0:
 		$BackBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 		_gi_update_timer = _update_time
+		$BackBuffer.set_shader_param("frame", _frame)
+		_frame += 1
 		
 	_last_update_timer -= delta
 	if _last_update_timer < 0.0:
@@ -154,7 +157,7 @@ func _setup_GI_pipeline():
 	$BackBuffer.set_shader_param("resolution", get_viewport().size)
 	$BackBuffer.set_shader_param("distance_data", $DistanceField.get_texture())
 	$BackBuffer.set_shader_param("scene_data", $SceneBuffer.get_texture())
-	#$BackBuffer.set_shader_param("last_frame_data", $LastFrameBuffer.get_texture())
+	$BackBuffer.set_shader_param("last_frame_data", $LastFrameBuffer.get_texture())
 	$BackBuffer.set_shader_param("dist_mod", 10.0)
 	#$BackBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 	

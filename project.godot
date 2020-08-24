@@ -19,11 +19,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://RenderTarget.gd"
 }, {
-"base": "Viewport",
-"class": "VoronoiBuffer",
-"language": "GDScript",
-"path": "res://VoronoiBuffer.gd"
-}, {
 "base": "Node",
 "class": "XXX",
 "language": "GDScript",
@@ -32,7 +27,6 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "Demo": "",
 "RenderTarget": "",
-"VoronoiBuffer": "",
 "XXX": ""
 }
 

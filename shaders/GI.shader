@@ -9,6 +9,7 @@ uniform sampler2D scene_data;
 uniform sampler2D last_frame_data;
 uniform sampler2D noise_data;
 uniform float dist_mod;
+uniform int frame;
 
 float epsilon()
 {
@@ -76,7 +77,7 @@ float get_emission_from_buffer(vec2 uv)
 	e = max(max(texture(last_frame_data, uv + pix * vec2(-1,-1)).a,0.),e);
 	e = max(max(texture(last_frame_data, uv + pix * vec2(0,-1)).a,0.),e);
 	e = max(max(texture(last_frame_data, uv + pix * vec2(1,-1)).a,0.),e);
-	return 4.0;
+	return e;
 }
 
 void fragment() 
@@ -116,21 +117,24 @@ void fragment()
 			{
 				last_emission = get_emission_from_buffer(st);
 			}
-			//if(d <= epsilon())
-			//	last_emission = 0.0;
+			if(frame == 0)
+				last_emission = 0.0;
+			if(d <= epsilon())
+				last_emission = 0.0;
 			
 			float emission = mat_emissive + last_emission;
 			float r = 2.;
-			float att = 1.0;//pow(max(1.0 - (d*d)/(r*r),0.),2.);
+			float att = pow(max(1.0 - (d*d)/(r*r),0.),2.);
 			emis += emission * att;
-			col += (mat_emissive + last_emission) * mat_colour * att;
+			
+			//col += (mat_emissive + last_emission) * mat_colour * att;
 		}
 	}
 	
-	col *= (1.0 / rays_per_pixel);
-    emis *= (1.0 / rays_per_pixel);
+	emis *= (1.0 / rays_per_pixel);
+	//col *= (1.0 / rays_per_pixel);
 	
-	COLOR = vec4(vec3(1.0), emis);
+	COLOR = vec4(vec3(emis), 1.0);
 
 	//COLOR = vec4(vec2(length(texture(in_data, uv).xy)), 0.0, 1.0);
 	/*
