@@ -14,6 +14,31 @@ var _ball_timer = 0.0
 var _main_scene = null
 var _light = null
 var _rng
+var _rtt_cycle_index = 0
+var _rtt_cycle_timer = 0.0
+var _rtt_cycle_times = [5.0, 3.0, 3.0, 3.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0]
+var _rtt_cycle_text = [
+	"Final",
+	"Scene Colour",
+	"Scene Emissive",
+	"Voronoi Seeds",
+	"Voronoi Pass #1",
+	"Voronoi Pass #2",
+	"Voronoi Pass #3",
+	"Voronoi Pass #4",
+	"Voronoi Pass #5",
+	"Voronoi Pass #6",
+	"Voronoi Pass #7",
+	"Voronoi Pass #8",
+	"Voronoi Final",
+	"Distance Field",
+	"No Bounce",
+	"Infinite Bounce",
+	"Temporal De-Noise",
+	"",
+	"",
+	""
+]
 
 var _update_time = 0.0
 var _gi_update_timer = 0.0
@@ -118,8 +143,8 @@ func _process(delta):
 				
 		#_light.position = get_global_mouse_position()
 				
-	$DebugRTT/Label.text = String(Engine.get_frames_per_second())
-	#$DebugRTT/Label.text = String(_gi_update_timer)
+	$DebugRTT/FPS.text = String(Engine.get_frames_per_second())
+	#$DebugRTT/FPS.text = String(_gi_update_timer)
 	
 	_gi_update_timer -= delta
 	if _gi_update_timer < 0.0:
@@ -135,10 +160,35 @@ func _process(delta):
 		$BackBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 		_gi_update_timer = _update_time
 		
-	_last_update_timer -= delta
-	if _last_update_timer < 0.0:
-		#$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
-		_last_update_timer = _update_time
+	_rtt_cycle_timer -= delta
+	if _rtt_cycle_timer < 0.0 and _rtt_cycle_index < _rtt_cycle_times.size() - 1 and _rtt_cycle_index < _rtt_cycle_text.size() - 1:
+		_rtt_cycle_timer = _rtt_cycle_times[_rtt_cycle_index]
+		match _rtt_cycle_index:
+			0: $Screen/Screen.get_material().set_shader_param("texture_to_draw", $BackBuffer.get_texture())
+			1: $Screen/Screen.get_material().set_shader_param("texture_to_draw", $SceneBuffer.get_texture())
+			2: $Screen/Screen.get_material().set_shader_param("texture_to_draw", GI.emissive_map.get_texture())
+			3: $Screen/Screen.get_material().set_shader_param("texture_to_draw", $VoronoiSeed.get_texture())
+			4: $Screen/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[0].get_texture())
+			5: $Screen/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[1].get_texture())
+			6: $Screen/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[2].get_texture())
+			7: $Screen/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[3].get_texture())
+			8: $Screen/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[4].get_texture())
+			9: $Screen/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[5].get_texture())
+			10: $Screen/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[6].get_texture())
+			11: $Screen/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[7].get_texture())
+			12: $Screen/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[8].get_texture())
+			13: $Screen/Screen.get_material().set_shader_param("texture_to_draw", $DistanceField.get_texture())
+			14: 
+				$Screen/Screen.get_material().set_shader_param("texture_to_draw", $BackBuffer.get_texture())
+				$BackBuffer.set_shader_param("do_bounce", false)
+				$BackBuffer.set_shader_param("do_denoise", false)
+			15: 
+				$BackBuffer.set_shader_param("do_bounce", true)
+			16:
+				$BackBuffer.set_shader_param("do_denoise", true)
+		
+		$DebugRTT/Info.text = _rtt_cycle_text[_rtt_cycle_index]	
+		_rtt_cycle_index += 1
 		
 func _setup_voronoi_pipeline():
 	

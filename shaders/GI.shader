@@ -10,6 +10,8 @@ uniform sampler2D scene_emissive_data;
 uniform sampler2D last_frame_data;
 uniform sampler2D noise_data;
 uniform float dist_mod;
+uniform bool do_bounce = true;
+uniform bool do_denoise = true;
 
 float epsilon()
 {
@@ -114,7 +116,8 @@ void fragment()
 			vec3 last_colour = vec3(0.0);
 			if(mat_emissive < epsilon()) // This determines if emissive surfaces themselves can bounce light.
 			{
-				get_last_frame_data(st, last_emission, last_colour);
+				if(do_bounce)
+					get_last_frame_data(st, last_emission, last_colour);
 			}
 			if(ray_dist < epsilon()) // So light doesn't bounce off the surface it was emitted from.
 				last_emission = 0.0;
@@ -132,6 +135,8 @@ void fragment()
 
     vec4 old_frame = texture(last_frame_data, UV).rgba;
 	float integ = 3.0;
+	if(!do_denoise)
+		integ = 1.0;
+		
 	COLOR = vec4((1.0 - (1.0 / integ)) * old_frame.rgb + col * (1.0 / integ), emis);
-	//COLOR = vec4((1.0 - (1.0 / integ)) * old_frame + vec4(col, emis) * (1.0 / integ));
 }

@@ -28,8 +28,8 @@ antialiased = false
 font_path = "res://Toy.ttf"
 
 [sub_resource type="DynamicFont" id=4]
-size = 48
-outline_size = 1
+size = 55
+outline_size = 2
 font_data = SubResource( 3 )
 
 [sub_resource type="ViewportTexture" id=5]
@@ -58,6 +58,8 @@ shader_param/PI = 3.1416
 shader_param/resolution = null
 shader_param/rays_per_pixel = 32.0
 shader_param/dist_mod = 2.0
+shader_param/do_bounce = true
+shader_param/do_denoise = true
 shader_param/noise_data = ExtResource( 5 )
 
 [sub_resource type="CircleShape2D" id=13]
@@ -169,7 +171,8 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="DebugRTT"]
+[node name="FPS" type="Label" parent="DebugRTT"]
+visible = false
 margin_left = 7.0
 margin_top = -9.0
 margin_right = 67.0
@@ -177,7 +180,26 @@ margin_bottom = 26.0
 custom_fonts/font = SubResource( 4 )
 custom_colors/font_color = Color( 1, 0, 0.556863, 1 )
 custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "00000"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Info" type="Label" parent="DebugRTT"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -100.0
+margin_top = 24.0
+margin_right = 100.0
+margin_bottom = 59.0
+rect_min_size = Vector2( 200, 0 )
+custom_fonts/font = SubResource( 4 )
+custom_colors/font_color = Color( 1, 0, 0.556863, 1 )
+custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+text = "00000"
+align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -218,6 +240,7 @@ material = SubResource( 9 )
 [node name="MainScene" type="Node2D" parent="."]
 
 [node name="Light" type="Sprite" parent="MainScene"]
+visible = false
 texture = ExtResource( 8 )
 script = ExtResource( 13 )
 
@@ -233,10 +256,13 @@ texture = ExtResource( 8 )
 shape = SubResource( 13 )
 
 [node name="Top" type="Sprite" parent="MainScene"]
-position = Vector2( 256, 0 )
-scale = Vector2( 512, 16 )
+position = Vector2( 512.869, 0 )
+scale = Vector2( 1025.74, 16 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="EmissiveSprite" type="Sprite" parent="MainScene/Top"]
 modulate = Color( 0.403922, 0.403922, 0.403922, 1 )
@@ -252,10 +278,14 @@ texture = ExtResource( 2 )
 shape = SubResource( 14 )
 
 [node name="Bottom" type="Sprite" parent="MainScene"]
-position = Vector2( 258.201, 512 )
-scale = Vector2( 308.749, 16 )
+position = Vector2( 284.645, 507.243 )
+rotation = -0.171395
+scale = Vector2( 359.26, 16 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="EmissiveSprite" type="Sprite" parent="MainScene/Bottom"]
 modulate = Color( 0, 0, 0, 1 )
@@ -270,11 +300,37 @@ texture = ExtResource( 2 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Bottom/StaticBody2D"]
 shape = SubResource( 14 )
 
+[node name="Bottom2" type="Sprite" parent="MainScene"]
+position = Vector2( 741.51, 502.486 )
+rotation = 0.172398
+scale = Vector2( 359.26, 16 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Bottom2"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Bottom2"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Bottom2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Bottom2/StaticBody2D"]
+shape = SubResource( 14 )
+
 [node name="Left" type="Sprite" parent="MainScene"]
 position = Vector2( 0, 256 )
 scale = Vector2( 16, 512 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="EmissiveSprite" type="Sprite" parent="MainScene/Left"]
 modulate = Color( 0, 0, 0, 1 )
@@ -290,10 +346,13 @@ texture = ExtResource( 2 )
 shape = SubResource( 14 )
 
 [node name="Right" type="Sprite" parent="MainScene"]
-position = Vector2( 512, 256 )
+position = Vector2( 1024, 256 )
 scale = Vector2( 16, 512 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="EmissiveSprite" type="Sprite" parent="MainScene/Right"]
 modulate = Color( 0, 0, 0, 1 )
@@ -309,9 +368,9 @@ texture = ExtResource( 2 )
 shape = SubResource( 14 )
 
 [node name="Slope1" type="Sprite" parent="MainScene"]
-position = Vector2( 94.8736, 107.968 )
+position = Vector2( 144.242, 121.907 )
 rotation = 0.275176
-scale = Vector2( 189.08, 9.16205 )
+scale = Vector2( 291.678, 9.16205 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
 __meta__ = {
@@ -332,9 +391,9 @@ texture = ExtResource( 2 )
 shape = SubResource( 14 )
 
 [node name="Slope2" type="Sprite" parent="MainScene"]
-position = Vector2( 256.718, 170.134 )
+position = Vector2( 438.509, 194.053 )
 rotation = -0.318262
-scale = Vector2( 139.332, 9.16205 )
+scale = Vector2( 184.074, 9.16205 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
 __meta__ = {
@@ -355,9 +414,9 @@ texture = ExtResource( 2 )
 shape = SubResource( 14 )
 
 [node name="Slope3" type="Sprite" parent="MainScene"]
-position = Vector2( 362.37, 96.6536 )
+position = Vector2( 742.467, 138.22 )
 rotation = 0.137486
-scale = Vector2( 205.844, 9.16205 )
+scale = Vector2( 430.639, 9.16205 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
 __meta__ = {
@@ -378,9 +437,9 @@ texture = ExtResource( 2 )
 shape = SubResource( 14 )
 
 [node name="Slope4" type="Sprite" parent="MainScene"]
-position = Vector2( 440.458, 216.758 )
+position = Vector2( 875.102, 249.348 )
 rotation = -0.100502
-scale = Vector2( 131.839, 9.16205 )
+scale = Vector2( 283.657, 9.16205 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
 __meta__ = {
@@ -424,9 +483,9 @@ texture = ExtResource( 2 )
 shape = SubResource( 14 )
 
 [node name="Slope6" type="Sprite" parent="MainScene"]
-position = Vector2( 361.808, 335.43 )
+position = Vector2( 536.514, 334.564 )
 rotation = 3.01758
-scale = Vector2( 177.354, 9.16205 )
+scale = Vector2( 249.041, 9.16205 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
 __meta__ = {
@@ -447,9 +506,9 @@ texture = ExtResource( 2 )
 shape = SubResource( 14 )
 
 [node name="Slope7" type="Sprite" parent="MainScene"]
-position = Vector2( 192.878, 407.124 )
+position = Vector2( 152.559, 397.125 )
 rotation = 3.37109
-scale = Vector2( 277.957, 9.16205 )
+scale = Vector2( 305.057, 9.16205 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
 __meta__ = {
@@ -467,4 +526,27 @@ texture = ExtResource( 2 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope7"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope7/StaticBody2D"]
+shape = SubResource( 14 )
+
+[node name="Slope8" type="Sprite" parent="MainScene"]
+position = Vector2( 812.455, 396.421 )
+rotation = 3.01453
+scale = Vector2( 277.957, 9.16205 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Slope8"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Slope8"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope8"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope8/StaticBody2D"]
 shape = SubResource( 14 )
