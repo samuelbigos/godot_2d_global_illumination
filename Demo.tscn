@@ -85,10 +85,10 @@ __meta__ = {
 
 [node name="BG" type="TextureRect" parent="DebugRTT"]
 visible = false
-modulate = Color( 0.27451, 0.27451, 0.27451, 1 )
-margin_right = 256.0
+modulate = Color( 0, 0, 0, 1 )
+margin_right = 128.0
 margin_bottom = 128.0
-rect_min_size = Vector2( 256, 128 )
+rect_min_size = Vector2( 128, 128 )
 texture = ExtResource( 2 )
 expand = true
 __meta__ = {
@@ -163,7 +163,7 @@ __meta__ = {
 visible = false
 margin_right = 128.0
 margin_bottom = 128.0
-rect_min_size = Vector2( 256, 256 )
+rect_min_size = Vector2( 128, 128 )
 expand = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -252,8 +252,8 @@ texture = ExtResource( 2 )
 shape = SubResource( 14 )
 
 [node name="Bottom" type="Sprite" parent="MainScene"]
-position = Vector2( 256, 512 )
-scale = Vector2( 512, 16 )
+position = Vector2( 258.201, 512 )
+scale = Vector2( 308.749, 16 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
 
@@ -268,6 +268,44 @@ texture = ExtResource( 2 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Bottom"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Bottom/StaticBody2D"]
+shape = SubResource( 14 )
+
+[node name="Left" type="Sprite" parent="MainScene"]
+position = Vector2( 0, 256 )
+scale = Vector2( 16, 512 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Left"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Left"]
+modulate = Color( 0, 0.164706, 0.313726, 1 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Left"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Left/StaticBody2D"]
+shape = SubResource( 14 )
+
+[node name="Right" type="Sprite" parent="MainScene"]
+position = Vector2( 512, 256 )
+scale = Vector2( 16, 512 )
+texture = ExtResource( 2 )
+script = ExtResource( 13 )
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Right"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Right"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 2 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Right"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Right/StaticBody2D"]
 shape = SubResource( 14 )
 
 [node name="Slope1" type="Sprite" parent="MainScene"]
@@ -363,8 +401,8 @@ texture = ExtResource( 2 )
 shape = SubResource( 14 )
 
 [node name="Slope5" type="Sprite" parent="MainScene"]
-position = Vector2( 187.095, 255.879 )
-rotation = 0.127267
+position = Vector2( 185.761, 264.556 )
+rotation = 0.0214005
 scale = Vector2( 235.513, 9.16205 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
@@ -409,8 +447,8 @@ texture = ExtResource( 2 )
 shape = SubResource( 14 )
 
 [node name="Slope7" type="Sprite" parent="MainScene"]
-position = Vector2( 208.229, 406.456 )
-rotation = 3.18042
+position = Vector2( 192.878, 407.124 )
+rotation = 3.37109
 scale = Vector2( 277.957, 9.16205 )
 texture = ExtResource( 2 )
 script = ExtResource( 13 )
@@ -429,42 +467,4 @@ texture = ExtResource( 2 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope7"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope7/StaticBody2D"]
-shape = SubResource( 14 )
-
-[node name="Left" type="Sprite" parent="MainScene"]
-position = Vector2( 0, 256 )
-scale = Vector2( 16, 512 )
-texture = ExtResource( 2 )
-script = ExtResource( 13 )
-
-[node name="EmissiveSprite" type="Sprite" parent="MainScene/Left"]
-modulate = Color( 0, 0, 0, 1 )
-texture = ExtResource( 2 )
-
-[node name="AlbedoSprite" type="Sprite" parent="MainScene/Left"]
-modulate = Color( 0, 0.164706, 0.313726, 1 )
-texture = ExtResource( 2 )
-
-[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Left"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Left/StaticBody2D"]
-shape = SubResource( 14 )
-
-[node name="Right" type="Sprite" parent="MainScene"]
-position = Vector2( 512, 256 )
-scale = Vector2( 16, 512 )
-texture = ExtResource( 2 )
-script = ExtResource( 13 )
-
-[node name="EmissiveSprite" type="Sprite" parent="MainScene/Right"]
-modulate = Color( 0, 0, 0, 1 )
-texture = ExtResource( 2 )
-
-[node name="AlbedoSprite" type="Sprite" parent="MainScene/Right"]
-modulate = Color( 0, 0, 0, 1 )
-texture = ExtResource( 2 )
-
-[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Right"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Right/StaticBody2D"]
 shape = SubResource( 14 )

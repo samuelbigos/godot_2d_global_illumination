@@ -129,18 +129,9 @@ void fragment()
 	
 	emis *= (1.0 / rays_per_pixel);
 	col *= (1.0 / rays_per_pixel);
-	
-	COLOR = vec4(col, emis);
 
-	//COLOR = vec4(vec2(length(texture(in_data, uv).xy)), 0.0, 1.0);
-	/*
-    highp vec3 old_col = texture(last_frame_buffer, UV).rgb;
-	vec3 total = col;
-	
-	if (frame == 0) 
-		old_col = vec3(0.0);
-		
-	float integ = 3.;
-	COLOR = vec4( (1.-(1./integ))*old_col +total*(1./integ), emis);
-	*/
+    vec4 old_frame = texture(last_frame_data, UV).rgba;
+	float integ = 3.0;
+	COLOR = vec4((1.0 - (1.0 / integ)) * old_frame.rgb + col * (1.0 / integ), emis);
+	//COLOR = vec4((1.0 - (1.0 / integ)) * old_frame + vec4(col, emis) * (1.0 / integ));
 }
