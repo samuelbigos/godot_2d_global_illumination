@@ -1,10 +1,10 @@
 shader_type canvas_item;
 render_mode skip_vertex_transform;
 
-uniform sampler2D i_tex;
-uniform float i_offset = 0.0; 
-uniform float i_level = 0.0;
-uniform float i_max_steps = 0.0;
+uniform sampler2D u_tex;
+uniform float u_offset = 0.0; 
+uniform float u_level = 0.0;
+uniform float u_max_steps = 0.0;
 
 void fragment() 
 {
@@ -16,9 +16,9 @@ void fragment()
 		for(float y = -1.0; y <= 1.0; y += 1.0)
 		{
 			vec2 voffset = UV;
-			voffset += vec2(x, y) * SCREEN_PIXEL_SIZE * i_offset;
+			voffset += vec2(x, y) * SCREEN_PIXEL_SIZE * u_offset;
 
-			vec2 pos = texture(i_tex, voffset).xy;
+			vec2 pos = texture(u_tex, voffset).xy;
 			float dist = distance(pos.xy, UV.xy);
 			
 			if(pos.x != 0.0 && pos.y != 0.0 && dist < closest_dist)

@@ -1,30 +1,36 @@
 shader_type canvas_item;
 
-// uniforms
+// constants
 uniform float PI = 3.141596;
-uniform vec2 resolution;
-uniform float rays_per_pixel;
-uniform sampler2D distance_data;
-uniform sampler2D scene_colour_data;
-uniform sampler2D scene_emissive_data;
-uniform sampler2D last_frame_data;
-uniform sampler2D noise_data;
-uniform float dist_mod;
-uniform bool do_bounce = true;
-uniform bool do_denoise = true;
+
+// uniforms
+uniform vec2 u_resolution = vec2(512.0, 512.0);
+uniform float u_rays_per_pixel = 32;
+uniform sampler2D u_distance_data;
+uniform sampler2D u_scene_colour_data;
+uniform sampler2D u_scene_emissive_data;
+uniform sampler2D u_last_frame_data;
+uniform sampler2D u_noise_data;
+uniform float u_dist_mod = 10.0;
+uniform bool u_bounce = true;
+uniform bool u_denoise = true;
+uniform float u_time = 0.0;
+uniform float u_emission_multi = 1.0;
+uniform float u_emission_range = 2.0;
+uniform float u_emission_dropoff = 2.0;
 
 float epsilon()
 {
-	return 0.5 / resolution.x;
+	return 0.5 / u_resolution.x;
 }
 
 void get_material(vec2 uv, vec4 hit_data, out float emissive, out vec3 colour)
 {	
-	if(hit_data.x / dist_mod < epsilon())
+	if(hit_data.x / u_dist_mod < epsilon())
 	{
-		vec4 emissive_data = texture(scene_emissive_data, uv);
-		vec4 colour_data = texture(scene_colour_data, uv);
-		emissive = emissive_data.r * 1.0;
+		vec4 emissive_data = texture(u_scene_emissive_data, uv);
+		vec4 colour_data = texture(u_scene_colour_data, uv);
+		emissive = emissive_data.r * u_emission_multi;
 		colour = colour_data.rgb;
 	}
 	else
@@ -36,8 +42,8 @@ void get_material(vec2 uv, vec4 hit_data, out float emissive, out vec3 colour)
 
 float map(vec2 uv, out vec4 hit_data)
 {
-	hit_data = texture(distance_data, uv);
-	float d = hit_data.x / dist_mod;
+	hit_data = texture(u_distance_data, uv);
+	float d = hit_data.x / u_dist_mod;
     return d;
 }
 
@@ -46,14 +52,14 @@ bool raymarch(vec2 origin, vec2 ray, out vec2 hit_pos, out vec4 hit_data, out fl
 	float t = 0.0;
 	float prev_dist = 1.0;
 	float step_dist = 1.0;
-	vec2 samplePoint;
+	vec2 sample_point;
 	for(int i = 0; i < 32; i++)
 	{
-		samplePoint = origin + ray * t;
-		step_dist = map(samplePoint, hit_data);
+		sample_point = origin + ray * t;
+		step_dist = map(sample_point, hit_data);
 		if(step_dist < epsilon())
 		{
-			hit_pos = samplePoint;
+			hit_pos = sample_point;
   			return true;
 		}
 		
@@ -66,12 +72,12 @@ bool raymarch(vec2 origin, vec2 ray, out vec2 hit_pos, out vec4 hit_data, out fl
 void get_last_frame_data(vec2 uv, out float last_emission, out vec3 last_colour)
 {
 	last_emission = 0.0;
-	vec2 pix = 1.0 / resolution.xy;
+	vec2 pix = 1.0 / u_resolution.xy;
 	for(int x = -1; x <= 1; x++)
 	{
 		for(int y = -1; y <= 1; y++)
 		{
-			vec4 pixel = texture(last_frame_data, uv + pix * vec2(float(x), float(y)));
+			vec4 pixel = texture(u_last_frame_data, uv + pix * vec2(float(x), float(y)));
 			if(pixel.a > last_emission)
 			{
 				last_emission = pixel.a;
@@ -84,18 +90,18 @@ void get_last_frame_data(vec2 uv, out float last_emission, out vec3 last_colour)
 void fragment() 
 {
 	vec2 uv = UV;
-	float aspect = resolution.x / resolution.y;
-	float invAspect = resolution.y / resolution.x;
+	float aspect = u_resolution.x / u_resolution.y;
+	float inv_aspect = u_resolution.y / u_resolution.x;
 	uv.x *= aspect;
 		
 	vec3 col = vec3(0.0);
 	float emis = 0.0;
 	
-	vec2 time = vec2(TIME * 0.923213456123, -TIME *0.99584367);
-	float rand02pi = texture(noise_data, fract((uv + time)*0.4)).r*2.*PI;//Noise sample
+	vec2 time = vec2(u_time * 0.923213456123, -u_time *0.99584367);
+	float rand02pi = texture(u_noise_data, fract((uv + time) * 0.4)).r * 2.0 * PI; // noise sample
 	float golden_angle = PI * (3. - sqrt(5.));
 	
-	for(float i = 0.0; i < rays_per_pixel; i++)
+	for(float i = 0.0; i < u_rays_per_pixel; i++)
 	{
 		vec2 hit_pos;
 		vec4 hit_data;
@@ -110,33 +116,49 @@ void fragment()
 			get_material(hit_pos, hit_data, mat_emissive, mat_colour);
 			
 			vec2 st = hit_pos;
-			st.x *= invAspect;
+			st.x *= inv_aspect;
 			
 			float last_emission = 0.0;
 			vec3 last_colour = vec3(0.0);
-			if(mat_emissive < epsilon()) // This determines if emissive surfaces themselves can bounce light.
+			if(u_bounce)
 			{
-				if(do_bounce)
+				if(mat_emissive < epsilon()) // This determines if emissive surfaces themselves can bounce light.
+				{
 					get_last_frame_data(st, last_emission, last_colour);
+				}
+				if(ray_dist < epsilon()) // So light doesn't bounce off the surface it was emitted from.
+					last_emission = 0.0;
 			}
-			if(ray_dist < epsilon()) // So light doesn't bounce off the surface it was emitted from.
-				last_emission = 0.0;
 			
 			float emission = mat_emissive + last_emission;
-			float r = 2.;
-			float att = pow(max(1.0 - (ray_dist*ray_dist)/(r*r),0.),2.);
+			float r = u_emission_range;
+			float drop = u_emission_dropoff;
+			float att = pow(max(1.0 - (ray_dist * ray_dist) / (r * r), 0.0), u_emission_dropoff);
 			emis += emission * att;
 			col += (mat_emissive + last_emission) * (mat_colour + last_colour) * att;
 		}
 	}
 	
-	emis *= (1.0 / rays_per_pixel);
-	col *= (1.0 / rays_per_pixel);
-
-    vec4 old_frame = texture(last_frame_data, UV).rgba;
-	float integ = 3.0;
-	if(!do_denoise)
-		integ = 1.0;
-		
-	COLOR = vec4((1.0 - (1.0 / integ)) * old_frame.rgb + col * (1.0 / integ), emis);
+	emis *= (1.0 / u_rays_per_pixel);
+	col *= (1.0 / u_rays_per_pixel);
+	
+	if(u_denoise)
+	{
+		vec4 last_9x9_average = vec4(0.0);
+		vec2 pix = 1.0 / u_resolution.xy;
+		for(int x = -1; x <= 1; x++)
+		{
+			for(int y = -1; y <= 1; y++)
+			{ 
+				last_9x9_average += texture(u_last_frame_data, uv + pix * vec2(float(x), float(y)));
+			}
+		}
+		last_9x9_average = last_9x9_average / 9.0;
+		float integ = 2.0;
+		COLOR = vec4((1.0 - (1.0 / integ)) * last_9x9_average.rgb + col * (1.0 / integ), emis);
+	}
+	else
+	{
+		COLOR = vec4(col, emis);
+	}
 }

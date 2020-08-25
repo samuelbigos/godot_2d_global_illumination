@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://shaders/VoronoiMultipass.shader" type="Shader" id=1]
-[ext_resource path="res://1px.png" type="Texture" id=2]
-[ext_resource path="res://VoronoiBuffer.gd" type="Script" id=3]
+[ext_resource path="res://assets/1px.png" type="Texture" id=2]
+[ext_resource path="res://src/VoronoiBuffer.gd" type="Script" id=3]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true

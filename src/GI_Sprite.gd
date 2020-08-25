@@ -10,7 +10,7 @@ class_name GI_Sprite
 """ PRIVATE """
 
 var _emissive = null
-var _albedo = null
+var _colour = null
 
 """ PUBLIC """
 
@@ -22,28 +22,28 @@ var _albedo = null
 
 func _ready():
 	_emissive = $EmissiveSprite
-	_albedo = $AlbedoSprite
+	_colour = $AlbedoSprite
 	
 	remove_child(_emissive)
-	remove_child(_albedo)
+	remove_child(_colour)
 	GI.emissive_map.add_child(_emissive)
-	GI.albedo_map.add_child(_albedo)
+	GI.colour_map.add_child(_colour)
 	
 	_emissive.texture = texture
-	_albedo.texture = texture
+	_colour.texture = texture
 	_emissive.scale = scale
-	_albedo.scale = scale
+	_colour.scale = scale
 	_emissive.rotation = rotation
 	_emissive.rotation = rotation
 	
 func _process(delta):
 	_emissive.set_global_transform(get_global_transform())
-	_albedo.set_global_transform(get_global_transform())
+	_colour.set_global_transform(get_global_transform())
 	
 """ PUBLIC """
 
 func set_emissive(emissive):
 	_emissive.modulate = Color(emissive, emissive, emissive)
 
-func set_albedo(albedo):
-	_albedo.modulate = albedo
+func set_colour(colour):
+	_colour.modulate = colour

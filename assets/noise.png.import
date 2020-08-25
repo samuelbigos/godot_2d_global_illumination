@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bg.png-24bff804693ee063127ad100e04c5185.stex"
+path="res://.import/noise.png-c29f7e52963a096aeaf0c1efd1a79456.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://bg.png"
-dest_files=[ "res://.import/bg.png-24bff804693ee063127ad100e04c5185.stex" ]
+source_file="res://assets/noise.png"
+dest_files=[ "res://.import/noise.png-c29f7e52963a096aeaf0c1efd1a79456.stex" ]
 
 [params]
 

@@ -12,51 +12,46 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "Demo",
 "language": "GDScript",
-"path": "res://Demo.gd"
+"path": "res://src/Demo.gd"
 }, {
 "base": "Sprite",
 "class": "GI_Sprite",
 "language": "GDScript",
-"path": "res://GI_Sprite.gd"
+"path": "res://src/GI_Sprite.gd"
 }, {
 "base": "Viewport",
 "class": "RenderTarget",
 "language": "GDScript",
-"path": "res://RenderTarget.gd"
+"path": "res://src/RenderTarget.gd"
 }, {
 "base": "Viewport",
 "class": "VoronoiBuffer",
 "language": "GDScript",
-"path": "res://VoronoiBuffer.gd"
-}, {
-"base": "Node",
-"class": "XXX",
-"language": "GDScript",
-"path": "res://SourceTemplate.gd"
+"path": "res://src/VoronoiBuffer.gd"
 } ]
 _global_script_class_icons={
 "Demo": "",
 "GI_Sprite": "",
 "RenderTarget": "",
-"VoronoiBuffer": "",
-"XXX": ""
+"VoronoiBuffer": ""
 }
 
 [application]
 
 config/name="Godot 2D Global Illumination"
-run/main_scene="res://Demo.tscn"
+run/main_scene="res://scenes/Demo.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
-GI="*res://GI.tscn"
+GI="*res://scenes/GI.tscn"
 
 [display]
 
-window/size/height=1024
-window/size/test_width=1024
-window/size/test_height=1024
+window/size/width=512
+window/size/height=512
+window/size/test_width=512
+window/size/test_height=512
 window/vsync/use_vsync=false
 window/stretch/mode="viewport"
 window/stretch/aspect="keep"

@@ -1,9 +1,8 @@
 shader_type canvas_item;
 render_mode skip_vertex_transform;
 
-uniform sampler2D texture_to_draw : hint_black;
-uniform bool sRGB = false;
-uniform float min_alpha = 1.0;
+uniform sampler2D u_texture_to_draw : hint_black;
+uniform bool u_sRGB = false;
 
 vec3 lin_to_srgb(vec3 color)
 {
@@ -18,10 +17,8 @@ vec3 lin_to_srgb(vec3 color)
 
 void fragment() 
 {
-	vec4 sample = texture(texture_to_draw, UV);
-	sample.a = max(min_alpha, sample.a);
-	
-	if(sRGB)
+	vec4 sample = texture(u_texture_to_draw, UV);
+	if(u_sRGB)
 		COLOR = vec4(lin_to_srgb(sample.xyz), sample.a);
 	else
 		COLOR = vec4(sample.xyz, sample.a);

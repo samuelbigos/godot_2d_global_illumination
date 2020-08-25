@@ -11,7 +11,7 @@ extends Node
 """ PUBLIC """
 
 var emissive_map : Viewport
-var albedo_map : Viewport
+var colour_map : Viewport
 
 ###########
 # METHODS #
@@ -21,8 +21,8 @@ var albedo_map : Viewport
 
 func _ready():
 	emissive_map = $EmissiveMap
-	albedo_map = $AlbedoMap	
+	colour_map = $ColourMap	
 	emissive_map.set_size(get_viewport().size)
-	albedo_map.set_size(get_viewport().size)
+	colour_map.set_size(get_viewport().size)
 
 """ PUBLIC """

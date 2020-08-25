@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://RenderTarget.gd" type="Script" id=1]
-[ext_resource path="res://1px.png" type="Texture" id=2]
+[ext_resource path="res://src/RenderTarget.gd" type="Script" id=1]
+[ext_resource path="res://assets/1px.png" type="Texture" id=2]
 
 [node name="RenderTarget" type="Viewport"]
 hdr = false
