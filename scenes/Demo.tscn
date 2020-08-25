@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://shaders/GI.shader" type="Shader" id=1]
 [ext_resource path="res://shaders/LastFrameRender.shader" type="Shader" id=2]
@@ -13,36 +13,30 @@
 [ext_resource path="res://assets/1px.png" type="Texture" id=11]
 [ext_resource path="res://assets/circle.png" type="Texture" id=12]
 [ext_resource path="res://assets/noise.png" type="Texture" id=13]
+[ext_resource path="res://assets/move.png" type="Texture" id=14]
+[ext_resource path="res://assets/min.png" type="Texture" id=15]
+[ext_resource path="res://assets/info.png" type="Texture" id=16]
 
-[sub_resource type="ShaderMaterial" id=2]
+[sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
 shader = ExtResource( 5 )
 shader_param/u_sRGB = true
 
-[sub_resource type="DynamicFontData" id=3]
-antialiased = false
-font_path = "res://assets/Toy.ttf"
-
-[sub_resource type="DynamicFont" id=4]
-size = 55
-outline_size = 2
-font_data = SubResource( 3 )
-
-[sub_resource type="ShaderMaterial" id=6]
+[sub_resource type="ShaderMaterial" id=4]
 resource_local_to_scene = true
 shader = ExtResource( 3 )
 
-[sub_resource type="ShaderMaterial" id=7]
+[sub_resource type="ShaderMaterial" id=5]
 resource_local_to_scene = true
 shader = ExtResource( 4 )
 shader_param/u_dist_mod = 1.0
 
-[sub_resource type="ShaderMaterial" id=8]
+[sub_resource type="ShaderMaterial" id=6]
 resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource( 2 )
 
-[sub_resource type="ShaderMaterial" id=9]
+[sub_resource type="ShaderMaterial" id=7]
 resource_local_to_scene = true
 shader = ExtResource( 1 )
 shader_param/PI = 3.1416
@@ -51,13 +45,12 @@ shader_param/u_rays_per_pixel = 32.0
 shader_param/u_dist_mod = 10.0
 shader_param/u_bounce = true
 shader_param/u_denoise = true
-shader_param/u_time = 0.0
 shader_param/u_emission_multi = 1.0
 shader_param/u_emission_range = 2.0
 shader_param/u_emission_dropoff = 2.0
 shader_param/u_noise_data = ExtResource( 13 )
 
-[sub_resource type="RectangleShape2D" id=11]
+[sub_resource type="RectangleShape2D" id=8]
 extents = Vector2( 0.49991, 0.49998 )
 
 [node name="Demo" type="Node2D"]
@@ -68,7 +61,7 @@ ball_scene = ExtResource( 9 )
 [node name="Screen" type="CanvasLayer" parent="."]
 
 [node name="Screen" type="TextureRect" parent="Screen"]
-material = SubResource( 2 )
+material = SubResource( 1 )
 mouse_filter = 0
 texture = ExtResource( 11 )
 expand = true
@@ -76,22 +69,36 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Controls" type="CanvasLayer" parent="."]
-
-[node name="TabContainer" type="TabContainer" parent="Controls"]
-margin_left = 236.023
-margin_top = 22.591
-margin_right = 494.023
-margin_bottom = 290.591
-size_flags_horizontal = 4
-size_flags_vertical = 4
-tab_align = 0
-use_hidden_tabs_for_min_size = true
+[node name="FPS" type="Label" parent="Screen"]
+margin_right = 40.0
+margin_bottom = 14.0
+text = "0"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Params" type="VBoxContainer" parent="Controls/TabContainer"]
+[node name="Controls" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="Controls"]
+margin_left = 232.0
+margin_top = 16.0
+margin_right = 272.0
+margin_bottom = 56.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TabContainer" type="TabContainer" parent="Controls/Control"]
+margin_right = 258.0
+margin_bottom = 268.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tab_align = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Params" type="VBoxContainer" parent="Controls/Control/TabContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -104,20 +111,26 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RaysPerPixel" type="HBoxContainer" parent="Controls/TabContainer/Params"]
+[node name="RaysPerPixel" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
 margin_right = 250.0
-margin_bottom = 16.0
+margin_bottom = 22.0
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="Controls/TabContainer/Params/RaysPerPixel"]
-margin_top = 1.0
-margin_right = 93.0
-margin_bottom = 15.0
+[node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/RaysPerPixel"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/RaysPerPixel"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 113.0
+margin_bottom = 18.0
 text = "Rays Per Pixel:"
 align = 2
 
-[node name="RaysPerPixelSlider" type="HSlider" parent="Controls/TabContainer/Params/RaysPerPixel"]
-margin_left = 97.0
+[node name="RaysPerPixelSlider" type="HSlider" parent="Controls/Control/TabContainer/Params/RaysPerPixel"]
+margin_left = 117.0
 margin_right = 230.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
@@ -128,34 +141,40 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RaysPerPixel" type="Label" parent="Controls/TabContainer/Params/RaysPerPixel"]
+[node name="RaysPerPixel" type="Label" parent="Controls/Control/TabContainer/Params/RaysPerPixel"]
 margin_left = 234.0
-margin_top = 1.0
+margin_top = 4.0
 margin_right = 250.0
-margin_bottom = 15.0
+margin_bottom = 18.0
 text = "32"
 align = 2
 
-[node name="HSeparator" type="HSeparator" parent="Controls/TabContainer/Params"]
-margin_top = 20.0
+[node name="HSeparator" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
+margin_top = 26.0
 margin_right = 250.0
-margin_bottom = 24.0
+margin_bottom = 30.0
 
-[node name="DistanceMod" type="HBoxContainer" parent="Controls/TabContainer/Params"]
-margin_top = 28.0
+[node name="DistanceMod" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
+margin_top = 34.0
 margin_right = 250.0
-margin_bottom = 44.0
+margin_bottom = 56.0
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="Controls/TabContainer/Params/DistanceMod"]
-margin_top = 1.0
-margin_right = 92.0
-margin_bottom = 15.0
+[node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/DistanceMod"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/DistanceMod"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 112.0
+margin_bottom = 18.0
 text = "Distance Mod:"
 align = 2
 
-[node name="DistanceModSlider" type="HSlider" parent="Controls/TabContainer/Params/DistanceMod"]
-margin_left = 96.0
+[node name="DistanceModSlider" type="HSlider" parent="Controls/Control/TabContainer/Params/DistanceMod"]
+margin_left = 116.0
 margin_right = 218.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
@@ -167,34 +186,40 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="DistanceMod" type="Label" parent="Controls/TabContainer/Params/DistanceMod"]
+[node name="DistanceMod" type="Label" parent="Controls/Control/TabContainer/Params/DistanceMod"]
 margin_left = 222.0
-margin_top = 1.0
+margin_top = 4.0
 margin_right = 250.0
-margin_bottom = 15.0
+margin_bottom = 18.0
 text = "10.0"
 align = 2
 
-[node name="HSeparator2" type="HSeparator" parent="Controls/TabContainer/Params"]
-margin_top = 48.0
+[node name="HSeparator2" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
+margin_top = 60.0
 margin_right = 250.0
-margin_bottom = 52.0
+margin_bottom = 64.0
 
-[node name="EmissionMulti" type="HBoxContainer" parent="Controls/TabContainer/Params"]
-margin_top = 56.0
+[node name="EmissionMulti" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
+margin_top = 68.0
 margin_right = 250.0
-margin_bottom = 72.0
+margin_bottom = 90.0
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="Controls/TabContainer/Params/EmissionMulti"]
-margin_top = 1.0
-margin_right = 99.0
-margin_bottom = 15.0
+[node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/EmissionMulti"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/EmissionMulti"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 119.0
+margin_bottom = 18.0
 text = "Emission Multi:"
 align = 2
 
-[node name="EmissionMultiSlider" type="HSlider" parent="Controls/TabContainer/Params/EmissionMulti"]
-margin_left = 103.0
+[node name="EmissionMultiSlider" type="HSlider" parent="Controls/Control/TabContainer/Params/EmissionMulti"]
+margin_left = 123.0
 margin_right = 226.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
@@ -206,34 +231,40 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EmissionMulti" type="Label" parent="Controls/TabContainer/Params/EmissionMulti"]
+[node name="EmissionMulti" type="Label" parent="Controls/Control/TabContainer/Params/EmissionMulti"]
 margin_left = 230.0
-margin_top = 1.0
+margin_top = 4.0
 margin_right = 250.0
-margin_bottom = 15.0
+margin_bottom = 18.0
 text = "1.0"
 align = 2
 
-[node name="HSeparator3" type="HSeparator" parent="Controls/TabContainer/Params"]
-margin_top = 76.0
+[node name="HSeparator3" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
+margin_top = 94.0
 margin_right = 250.0
-margin_bottom = 80.0
+margin_bottom = 98.0
 
-[node name="EmissionRange" type="HBoxContainer" parent="Controls/TabContainer/Params"]
-margin_top = 84.0
+[node name="EmissionRange" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
+margin_top = 102.0
 margin_right = 250.0
-margin_bottom = 100.0
+margin_bottom = 124.0
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="Controls/TabContainer/Params/EmissionRange"]
-margin_top = 1.0
-margin_right = 104.0
-margin_bottom = 15.0
+[node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/EmissionRange"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/EmissionRange"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 124.0
+margin_bottom = 18.0
 text = "Emission Range:"
 align = 2
 
-[node name="EmissionRangeSlider" type="HSlider" parent="Controls/TabContainer/Params/EmissionRange"]
-margin_left = 108.0
+[node name="EmissionRangeSlider" type="HSlider" parent="Controls/Control/TabContainer/Params/EmissionRange"]
+margin_left = 128.0
 margin_right = 226.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
@@ -245,34 +276,40 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EmissionRange" type="Label" parent="Controls/TabContainer/Params/EmissionRange"]
+[node name="EmissionRange" type="Label" parent="Controls/Control/TabContainer/Params/EmissionRange"]
 margin_left = 230.0
-margin_top = 1.0
+margin_top = 4.0
 margin_right = 250.0
-margin_bottom = 15.0
+margin_bottom = 18.0
 text = "1.0"
 align = 2
 
-[node name="HSeparator4" type="HSeparator" parent="Controls/TabContainer/Params"]
-margin_top = 104.0
+[node name="HSeparator4" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
+margin_top = 128.0
 margin_right = 250.0
-margin_bottom = 108.0
+margin_bottom = 132.0
 
-[node name="EmissionDropoff" type="HBoxContainer" parent="Controls/TabContainer/Params"]
-margin_top = 112.0
+[node name="EmissionDropoff" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
+margin_top = 136.0
 margin_right = 250.0
-margin_bottom = 128.0
+margin_bottom = 158.0
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="Controls/TabContainer/Params/EmissionDropoff"]
-margin_top = 1.0
-margin_right = 118.0
-margin_bottom = 15.0
+[node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/EmissionDropoff"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/EmissionDropoff"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 138.0
+margin_bottom = 18.0
 text = "Emission Drop-off:"
 align = 2
 
-[node name="EmissionDropoffSlider" type="HSlider" parent="Controls/TabContainer/Params/EmissionDropoff"]
-margin_left = 122.0
+[node name="EmissionDropoffSlider" type="HSlider" parent="Controls/Control/TabContainer/Params/EmissionDropoff"]
+margin_left = 142.0
 margin_right = 226.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
@@ -284,37 +321,44 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EmissionDropoff" type="Label" parent="Controls/TabContainer/Params/EmissionDropoff"]
+[node name="EmissionDropoff" type="Label" parent="Controls/Control/TabContainer/Params/EmissionDropoff"]
 margin_left = 230.0
-margin_top = 1.0
+margin_top = 4.0
 margin_right = 250.0
-margin_bottom = 15.0
+margin_bottom = 18.0
 text = "1.0"
 align = 2
 
-[node name="HSeparator5" type="HSeparator" parent="Controls/TabContainer/Params"]
-margin_top = 132.0
+[node name="HSeparator5" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
+margin_top = 162.0
 margin_right = 250.0
-margin_bottom = 136.0
+margin_bottom = 166.0
 
-[node name="LightBounce" type="HBoxContainer" parent="Controls/TabContainer/Params"]
-margin_top = 140.0
+[node name="LightBounce" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
+margin_top = 170.0
 margin_right = 250.0
-margin_bottom = 154.0
+margin_bottom = 192.0
 
-[node name="Label" type="Label" parent="Controls/TabContainer/Params/LightBounce"]
-margin_right = 87.0
-margin_bottom = 14.0
+[node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/LightBounce"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/LightBounce"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 107.0
+margin_bottom = 18.0
 text = "Light Bounce:"
 align = 2
 
-[node name="Container" type="Container" parent="Controls/TabContainer/Params/LightBounce"]
-margin_left = 91.0
+[node name="Container" type="Container" parent="Controls/Control/TabContainer/Params/LightBounce"]
+margin_left = 111.0
 margin_right = 250.0
-margin_bottom = 14.0
+margin_bottom = 22.0
 size_flags_horizontal = 3
 
-[node name="LightBounceButton" type="CheckButton" parent="Controls/TabContainer/Params/LightBounce/Container"]
+[node name="LightBounceButton" type="CheckButton" parent="Controls/Control/TabContainer/Params/LightBounce/Container"]
 anchor_right = 1.0
 margin_top = -13.0
 margin_bottom = 27.0
@@ -328,29 +372,36 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSeparator6" type="HSeparator" parent="Controls/TabContainer/Params"]
-margin_top = 158.0
+[node name="HSeparator6" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
+margin_top = 196.0
 margin_right = 250.0
-margin_bottom = 162.0
+margin_bottom = 200.0
 
-[node name="De-Noise" type="HBoxContainer" parent="Controls/TabContainer/Params"]
-margin_top = 166.0
+[node name="De-Noise" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
+margin_top = 204.0
 margin_right = 250.0
-margin_bottom = 180.0
+margin_bottom = 226.0
 
-[node name="Label" type="Label" parent="Controls/TabContainer/Params/De-Noise"]
-margin_right = 64.0
-margin_bottom = 14.0
+[node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/De-Noise"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/De-Noise"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 84.0
+margin_bottom = 18.0
 text = "De-Noise:"
 align = 2
 
-[node name="Container" type="Container" parent="Controls/TabContainer/Params/De-Noise"]
-margin_left = 68.0
+[node name="Container" type="Container" parent="Controls/Control/TabContainer/Params/De-Noise"]
+margin_left = 88.0
 margin_right = 250.0
-margin_bottom = 14.0
+margin_bottom = 22.0
 size_flags_horizontal = 3
 
-[node name="DeNoiseButton" type="CheckButton" parent="Controls/TabContainer/Params/De-Noise/Container"]
+[node name="DeNoiseButton" type="CheckButton" parent="Controls/Control/TabContainer/Params/De-Noise/Container"]
 anchor_right = 1.0
 margin_top = -13.0
 focus_mode = 0
@@ -362,29 +413,36 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSeparator7" type="HSeparator" parent="Controls/TabContainer/Params"]
-margin_top = 184.0
+[node name="HSeparator7" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
+margin_top = 230.0
 margin_right = 250.0
-margin_bottom = 188.0
+margin_bottom = 234.0
 
-[node name="Physics Freeze" type="HBoxContainer" parent="Controls/TabContainer/Params"]
-margin_top = 192.0
+[node name="Physics Freeze" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
+margin_top = 238.0
 margin_right = 250.0
-margin_bottom = 206.0
+margin_bottom = 260.0
 
-[node name="Label" type="Label" parent="Controls/TabContainer/Params/Physics Freeze"]
-margin_right = 99.0
-margin_bottom = 14.0
+[node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/Physics Freeze"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/Physics Freeze"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 119.0
+margin_bottom = 18.0
 text = "Physics Freeze:"
 align = 2
 
-[node name="Container" type="Container" parent="Controls/TabContainer/Params/Physics Freeze"]
-margin_left = 103.0
+[node name="Container" type="Container" parent="Controls/Control/TabContainer/Params/Physics Freeze"]
+margin_left = 123.0
 margin_right = 250.0
-margin_bottom = 14.0
+margin_bottom = 22.0
 size_flags_horizontal = 3
 
-[node name="FreezeButton" type="CheckButton" parent="Controls/TabContainer/Params/Physics Freeze/Container"]
+[node name="FreezeButton" type="CheckButton" parent="Controls/Control/TabContainer/Params/Physics Freeze/Container"]
 anchor_right = 1.0
 margin_top = -13.0
 focus_mode = 0
@@ -395,29 +453,36 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HSeparator8" type="HSeparator" parent="Controls/TabContainer/Params"]
-margin_top = 210.0
+[node name="HSeparator8" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
+margin_top = 264.0
 margin_right = 250.0
-margin_bottom = 214.0
+margin_bottom = 268.0
 
-[node name="MouseSpawn" type="HBoxContainer" parent="Controls/TabContainer/Params"]
-margin_top = 218.0
+[node name="MouseSpawn" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
+margin_top = 272.0
 margin_right = 250.0
-margin_bottom = 232.0
+margin_bottom = 294.0
 
-[node name="Label" type="Label" parent="Controls/TabContainer/Params/MouseSpawn"]
-margin_right = 126.0
-margin_bottom = 14.0
+[node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/MouseSpawn"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/MouseSpawn"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 146.0
+margin_bottom = 18.0
 text = "Mouse Spawn Balls:"
 align = 2
 
-[node name="Container" type="Container" parent="Controls/TabContainer/Params/MouseSpawn"]
-margin_left = 130.0
+[node name="Container" type="Container" parent="Controls/Control/TabContainer/Params/MouseSpawn"]
+margin_left = 150.0
 margin_right = 250.0
-margin_bottom = 14.0
+margin_bottom = 22.0
 size_flags_horizontal = 3
 
-[node name="MouseSpawnButton" type="CheckButton" parent="Controls/TabContainer/Params/MouseSpawn/Container"]
+[node name="MouseSpawnButton" type="CheckButton" parent="Controls/Control/TabContainer/Params/MouseSpawn/Container"]
 anchor_right = 1.0
 margin_top = -13.0
 focus_mode = 0
@@ -428,7 +493,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="RTTs" type="VBoxContainer" parent="Controls/TabContainer"]
+[node name="RTTs" type="VBoxContainer" parent="Controls/Control/TabContainer"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -440,227 +505,144 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GridContainer" type="GridContainer" parent="Controls/TabContainer/RTTs"]
+[node name="GridContainer" type="GridContainer" parent="Controls/Control/TabContainer/RTTs"]
 margin_right = 254.0
 margin_bottom = 116.0
 columns = 2
 
-[node name="Final" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="Final" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_right = 96.0
 margin_bottom = 20.0
 text = "Final"
 
-[node name="Scene" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="Scene" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 100.0
 margin_right = 175.0
 margin_bottom = 20.0
 text = "Scene"
 
-[node name="Colour" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="Colour" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 100.0
 margin_right = 175.0
 margin_bottom = 20.0
 text = "Colour"
 
-[node name="Emissive" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="Emissive" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 179.0
 margin_right = 254.0
 margin_bottom = 20.0
 text = "Emissive"
 
-[node name="VoronoiSeed" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="VoronoiSeed" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_top = 24.0
 margin_right = 96.0
 margin_bottom = 44.0
 text = "Voronoi Seed"
 
-[node name="VoronoiPass1" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="VoronoiPass1" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 100.0
 margin_top = 24.0
 margin_right = 175.0
 margin_bottom = 44.0
 text = "V-Pass #1"
 
-[node name="VoronoiPass2" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="VoronoiPass2" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 179.0
 margin_top = 24.0
 margin_right = 254.0
 margin_bottom = 44.0
 text = "V-Pass #2"
 
-[node name="VoronoiPass3" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="VoronoiPass3" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_top = 48.0
 margin_right = 96.0
 margin_bottom = 68.0
 text = "V-Pass #3"
 
-[node name="VoronoiPass4" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="VoronoiPass4" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 100.0
 margin_top = 48.0
 margin_right = 175.0
 margin_bottom = 68.0
 text = "V-Pass #4"
 
-[node name="VoronoiPass5" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="VoronoiPass5" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 179.0
 margin_top = 48.0
 margin_right = 254.0
 margin_bottom = 68.0
 text = "V-Pass #5"
 
-[node name="VoronoiPass6" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="VoronoiPass6" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_top = 72.0
 margin_right = 96.0
 margin_bottom = 92.0
 text = "V-Pass #6"
 
-[node name="VoronoiPass7" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="VoronoiPass7" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 100.0
 margin_top = 72.0
 margin_right = 175.0
 margin_bottom = 92.0
 text = "V-Pass #7"
 
-[node name="VoronoiPass8" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="VoronoiPass8" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 179.0
 margin_top = 72.0
 margin_right = 254.0
 margin_bottom = 92.0
 text = "V-Pass #8"
 
-[node name="VoronoiPass9" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="VoronoiPass9" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_top = 96.0
 margin_right = 96.0
 margin_bottom = 116.0
 text = "V-Pass #9"
 
-[node name="DistanceField" type="Button" parent="Controls/TabContainer/RTTs/GridContainer"]
+[node name="DistanceField" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 100.0
 margin_top = 96.0
 margin_right = 175.0
 margin_bottom = 116.0
 text = "Dist-Field"
 
-[node name="DebugRTT" type="CanvasLayer" parent="."]
-
-[node name="BG" type="TextureRect" parent="DebugRTT"]
-visible = false
-modulate = Color( 0, 0, 0, 1 )
-margin_right = 128.0
-margin_bottom = 128.0
-rect_min_size = Vector2( 128, 128 )
-texture = ExtResource( 11 )
-expand = true
+[node name="Minimise" type="Button" parent="Controls/Control"]
+margin_left = 231.0
+margin_top = -1.0
+margin_right = 259.0
+margin_bottom = 21.0
+icon = ExtResource( 15 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="SceneDebug" type="TextureRect" parent="DebugRTT"]
-visible = false
-margin_right = 128.0
-margin_bottom = 128.0
-rect_min_size = Vector2( 256, 256 )
-expand = true
+[node name="Move" type="Button" parent="Controls/Control"]
+margin_left = 199.0
+margin_top = -1.0
+margin_right = 227.0
+margin_bottom = 21.0
+icon = ExtResource( 14 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="EmissiveDebug" type="TextureRect" parent="DebugRTT"]
+[node name="Tooltip" type="PanelContainer" parent="Controls"]
 visible = false
-margin_right = 128.0
-margin_bottom = 128.0
-rect_min_size = Vector2( 128, 128 )
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="AlbedoDebug" type="TextureRect" parent="DebugRTT"]
-visible = false
-margin_left = 128.0
-margin_right = 256.0
-margin_bottom = 128.0
-rect_min_size = Vector2( 128, 128 )
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="VoronoiSeedDebug" type="TextureRect" parent="DebugRTT"]
-visible = false
-margin_left = 128.0
-margin_right = 256.0
-margin_bottom = 128.0
-rect_min_size = Vector2( 128, 128 )
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="VoronoiDebug" type="TextureRect" parent="DebugRTT"]
-visible = false
-margin_left = 256.0
-margin_right = 384.0
-margin_bottom = 128.0
-rect_min_size = Vector2( 128, 128 )
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="DistanceFieldDebug" type="TextureRect" parent="DebugRTT"]
-visible = false
-margin_left = 384.0
-margin_right = 512.0
-margin_bottom = 128.0
-rect_min_size = Vector2( 128, 128 )
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="LastFrameDebug" type="TextureRect" parent="DebugRTT"]
-visible = false
-margin_right = 128.0
-margin_bottom = 128.0
-rect_min_size = Vector2( 128, 128 )
-expand = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="FPS" type="Label" parent="DebugRTT"]
-margin_left = 7.0
-margin_top = -9.0
-margin_right = 67.0
-margin_bottom = 26.0
-custom_fonts/font = SubResource( 4 )
-custom_colors/font_color = Color( 1, 0, 0.556863, 1 )
-custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "00000"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Info" type="Label" parent="DebugRTT"]
-visible = false
-anchor_left = 0.5
 anchor_right = 0.5
-margin_left = -100.0
-margin_top = 24.0
-margin_right = 100.0
-margin_bottom = 59.0
-rect_min_size = Vector2( 200, 0 )
-custom_fonts/font = SubResource( 4 )
-custom_colors/font_color = Color( 1, 0, 0.556863, 1 )
-custom_colors/font_outline_modulate = Color( 1, 1, 1, 1 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-text = "00000"
-align = 1
+margin_right = -56.0
+margin_bottom = 28.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Label" type="Label" parent="Controls/Tooltip"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 207.0
+margin_bottom = 21.0
+rect_min_size = Vector2( 200, 0 )
+text = "This is a tooltip!"
+autowrap = true
 
 [node name="SceneBuffer" type="Viewport" parent="."]
 transparent_bg = true
@@ -672,7 +654,7 @@ render_target_v_flip = true
 render_target_update_mode = 3
 
 [node name="Texture" type="TextureRect" parent="VoronoiSeed"]
-material = SubResource( 6 )
+material = SubResource( 4 )
 texture = ExtResource( 11 )
 expand = true
 
@@ -681,7 +663,7 @@ render_target_v_flip = true
 render_target_update_mode = 3
 
 [node name="Texture" type="TextureRect" parent="DistanceField"]
-material = SubResource( 7 )
+material = SubResource( 5 )
 margin_right = 40.0
 margin_bottom = 40.0
 texture = ExtResource( 11 )
@@ -689,16 +671,16 @@ expand = true
 
 [node name="LastFrameBuffer" parent="." instance=ExtResource( 8 )]
 transparent_bg = true
-material = SubResource( 8 )
+material = SubResource( 6 )
 
 [node name="GI" parent="." instance=ExtResource( 8 )]
 transparent_bg = true
-material = SubResource( 9 )
+material = SubResource( 7 )
 
 [node name="MainScene" type="Node2D" parent="."]
 
 [node name="Light" type="Sprite" parent="MainScene"]
-position = Vector2( 256, 8 )
+position = Vector2( 127, 56 )
 texture = ExtResource( 12 )
 script = ExtResource( 6 )
 
@@ -728,7 +710,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Top"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Top/StaticBody2D"]
-shape = SubResource( 11 )
+shape = SubResource( 8 )
 
 [node name="Bottom" type="Sprite" parent="MainScene"]
 position = Vector2( 284.645, 507.243 )
@@ -751,7 +733,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Bottom"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Bottom/StaticBody2D"]
-shape = SubResource( 11 )
+shape = SubResource( 8 )
 
 [node name="Left" type="Sprite" parent="MainScene"]
 position = Vector2( 0, 256 )
@@ -773,7 +755,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Left"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Left/StaticBody2D"]
-shape = SubResource( 11 )
+shape = SubResource( 8 )
 
 [node name="Right" type="Sprite" parent="MainScene"]
 position = Vector2( 512, 256 )
@@ -795,7 +777,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Right"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Right/StaticBody2D"]
-shape = SubResource( 11 )
+shape = SubResource( 8 )
 
 [node name="Slope1" type="Sprite" parent="MainScene"]
 position = Vector2( 144.242, 121.907 )
@@ -818,7 +800,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope1"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope1/StaticBody2D"]
-shape = SubResource( 11 )
+shape = SubResource( 8 )
 
 [node name="Slope2" type="Sprite" parent="MainScene"]
 position = Vector2( 438.509, 194.053 )
@@ -841,7 +823,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope2"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope2/StaticBody2D"]
-shape = SubResource( 11 )
+shape = SubResource( 8 )
 
 [node name="Slope5" type="Sprite" parent="MainScene"]
 position = Vector2( 185.761, 264.556 )
@@ -864,7 +846,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope5"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope5/StaticBody2D"]
-shape = SubResource( 11 )
+shape = SubResource( 8 )
 
 [node name="Slope6" type="Sprite" parent="MainScene"]
 position = Vector2( 392.514, 342.564 )
@@ -887,7 +869,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope6"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope6/StaticBody2D"]
-shape = SubResource( 11 )
+shape = SubResource( 8 )
 
 [node name="Slope7" type="Sprite" parent="MainScene"]
 position = Vector2( 152.559, 397.125 )
@@ -910,28 +892,48 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope7"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope7/StaticBody2D"]
-shape = SubResource( 11 )
-[connection signal="value_changed" from="Controls/TabContainer/Params/RaysPerPixel/RaysPerPixelSlider" to="." method="_on_RaysPerPixelSlider_value_changed"]
-[connection signal="value_changed" from="Controls/TabContainer/Params/DistanceMod/DistanceModSlider" to="." method="_on_DistanceModSlider_value_changed"]
-[connection signal="value_changed" from="Controls/TabContainer/Params/EmissionMulti/EmissionMultiSlider" to="." method="_on_EmissionMultiSlider_value_changed"]
-[connection signal="value_changed" from="Controls/TabContainer/Params/EmissionRange/EmissionRangeSlider" to="." method="_on_EmissionRangeSlider_value_changed"]
-[connection signal="value_changed" from="Controls/TabContainer/Params/EmissionDropoff/EmissionDropoffSlider" to="." method="_on_EmissionDropoffSlider_value_changed"]
-[connection signal="toggled" from="Controls/TabContainer/Params/LightBounce/Container/LightBounceButton" to="." method="_on_LightBounceButton_toggled"]
-[connection signal="toggled" from="Controls/TabContainer/Params/De-Noise/Container/DeNoiseButton" to="." method="_on_DeNoiseButton_toggled"]
-[connection signal="toggled" from="Controls/TabContainer/Params/Physics Freeze/Container/FreezeButton" to="." method="_on_FreezeButton_toggled"]
-[connection signal="toggled" from="Controls/TabContainer/Params/MouseSpawn/Container/MouseSpawnButton" to="." method="_on_MouseSpawnButton_toggled"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/Final" to="." method="_on_Final_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/Scene" to="." method="_on_Scene_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/Colour" to="." method="_on_Colour_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/Emissive" to="." method="_on_Emissive_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/VoronoiSeed" to="." method="_on_VoronoiSeed_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/VoronoiPass1" to="." method="_on_VoronoiPass1_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/VoronoiPass2" to="." method="_on_VoronoiPass2_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/VoronoiPass3" to="." method="_on_VoronoiPass3_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/VoronoiPass4" to="." method="_on_VoronoiPass4_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/VoronoiPass5" to="." method="_on_VoronoiPass5_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/VoronoiPass6" to="." method="_on_VoronoiPass6_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/VoronoiPass7" to="." method="_on_VoronoiPass7_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/VoronoiPass8" to="." method="_on_VoronoiPass8_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/VoronoiPass9" to="." method="_on_VoronoiPass9_pressed"]
-[connection signal="pressed" from="Controls/TabContainer/RTTs/GridContainer/DistanceField" to="." method="_on_DistanceField_pressed"]
+shape = SubResource( 8 )
+[connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/RaysPerPixel/Info" to="." method="_on_Info_mouse_entered" binds= [ 0 ]]
+[connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/RaysPerPixel/Info" to="." method="_on_Info_mouse_exited"]
+[connection signal="value_changed" from="Controls/Control/TabContainer/Params/RaysPerPixel/RaysPerPixelSlider" to="." method="_on_RaysPerPixelSlider_value_changed"]
+[connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/DistanceMod/Info" to="." method="_on_Info_mouse_entered" binds= [ 1 ]]
+[connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/DistanceMod/Info" to="." method="_on_Info_mouse_exited"]
+[connection signal="value_changed" from="Controls/Control/TabContainer/Params/DistanceMod/DistanceModSlider" to="." method="_on_DistanceModSlider_value_changed"]
+[connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/EmissionMulti/Info" to="." method="_on_Info_mouse_entered" binds= [ 2 ]]
+[connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/EmissionMulti/Info" to="." method="_on_Info_mouse_exited"]
+[connection signal="value_changed" from="Controls/Control/TabContainer/Params/EmissionMulti/EmissionMultiSlider" to="." method="_on_EmissionMultiSlider_value_changed"]
+[connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/EmissionRange/Info" to="." method="_on_Info_mouse_entered" binds= [ 3 ]]
+[connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/EmissionRange/Info" to="." method="_on_Info_mouse_exited"]
+[connection signal="value_changed" from="Controls/Control/TabContainer/Params/EmissionRange/EmissionRangeSlider" to="." method="_on_EmissionRangeSlider_value_changed"]
+[connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/EmissionDropoff/Info" to="." method="_on_Info_mouse_entered" binds= [ 4 ]]
+[connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/EmissionDropoff/Info" to="." method="_on_Info_mouse_exited"]
+[connection signal="value_changed" from="Controls/Control/TabContainer/Params/EmissionDropoff/EmissionDropoffSlider" to="." method="_on_EmissionDropoffSlider_value_changed"]
+[connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/LightBounce/Info" to="." method="_on_Info_mouse_entered" binds= [ 5 ]]
+[connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/LightBounce/Info" to="." method="_on_Info_mouse_exited"]
+[connection signal="toggled" from="Controls/Control/TabContainer/Params/LightBounce/Container/LightBounceButton" to="." method="_on_LightBounceButton_toggled"]
+[connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/De-Noise/Info" to="." method="_on_Info_mouse_entered" binds= [ 6 ]]
+[connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/De-Noise/Info" to="." method="_on_Info_mouse_exited"]
+[connection signal="toggled" from="Controls/Control/TabContainer/Params/De-Noise/Container/DeNoiseButton" to="." method="_on_DeNoiseButton_toggled"]
+[connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/Physics Freeze/Info" to="." method="_on_Info_mouse_entered" binds= [ 7 ]]
+[connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/Physics Freeze/Info" to="." method="_on_Info_mouse_exited"]
+[connection signal="toggled" from="Controls/Control/TabContainer/Params/Physics Freeze/Container/FreezeButton" to="." method="_on_FreezeButton_toggled"]
+[connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/MouseSpawn/Info" to="." method="_on_Info_mouse_entered" binds= [ 8 ]]
+[connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/MouseSpawn/Info" to="." method="_on_Info_mouse_exited"]
+[connection signal="toggled" from="Controls/Control/TabContainer/Params/MouseSpawn/Container/MouseSpawnButton" to="." method="_on_MouseSpawnButton_toggled"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/Final" to="." method="_on_Final_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/Scene" to="." method="_on_Scene_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/Colour" to="." method="_on_Colour_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/Emissive" to="." method="_on_Emissive_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiSeed" to="." method="_on_VoronoiSeed_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass1" to="." method="_on_VoronoiPass1_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass2" to="." method="_on_VoronoiPass2_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass3" to="." method="_on_VoronoiPass3_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass4" to="." method="_on_VoronoiPass4_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass5" to="." method="_on_VoronoiPass5_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass6" to="." method="_on_VoronoiPass6_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass7" to="." method="_on_VoronoiPass7_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass8" to="." method="_on_VoronoiPass8_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass9" to="." method="_on_VoronoiPass9_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/DistanceField" to="." method="_on_DistanceField_pressed"]
+[connection signal="pressed" from="Controls/Control/Minimise" to="." method="_on_Minimise_pressed"]
+[connection signal="button_down" from="Controls/Control/Move" to="." method="_on_Move_button_down"]

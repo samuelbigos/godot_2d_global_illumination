@@ -14,7 +14,6 @@ uniform sampler2D u_noise_data;
 uniform float u_dist_mod = 10.0;
 uniform bool u_bounce = true;
 uniform bool u_denoise = true;
-uniform float u_time = 0.0;
 uniform float u_emission_multi = 1.0;
 uniform float u_emission_range = 2.0;
 uniform float u_emission_dropoff = 2.0;
@@ -97,7 +96,7 @@ void fragment()
 	vec3 col = vec3(0.0);
 	float emis = 0.0;
 	
-	vec2 time = vec2(u_time * 0.923213456123, -u_time *0.99584367);
+	vec2 time = vec2(TIME * 0.923213456123, -TIME *0.99584367);
 	float rand02pi = texture(u_noise_data, fract((uv + time) * 0.4)).r * 2.0 * PI; // noise sample
 	float golden_angle = PI * (3. - sqrt(5.));
 	

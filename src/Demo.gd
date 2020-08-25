@@ -14,8 +14,10 @@ var _ball_timer = 0.0
 var _main_scene = null
 var _light = null
 var _rng
-var _timer = 0.0
 var _mouse_spawn = false
+var _moving_debug = false
+var _debug_init_pos = Vector2()
+var _moving_debug_press_start = Vector2()
 
 """ PUBLIC """
 
@@ -33,24 +35,18 @@ func _ready():
 	
 	_rng = RandomNumberGenerator.new()
 	_rng.randomize()
-
-	$Screen/Screen.rect_size = get_viewport().size
+	
 	$SceneBuffer.set_size(get_viewport().size)
 	
+	# viewport/RTT setup
 	_setup_voronoi_pipeline()
 	_setup_GI_pipeline()
 		
 	# output to screen
+	$Screen/Screen.rect_size = get_viewport().size
 	$Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $GI.get_texture())
 	
-	$DebugRTT/SceneDebug.texture = $SceneBuffer.get_texture()
-	$DebugRTT/EmissiveDebug.texture = GI.emissive_map.get_texture()
-	$DebugRTT/AlbedoDebug.texture = GI.colour_map.get_texture()
-	$DebugRTT/LastFrameDebug.texture = $LastFrameBuffer.get_texture()
-	$DebugRTT/VoronoiDebug.texture = _voronoi_buffers[_voronoi_buffers.size() - 1].get_texture()
-	$DebugRTT/DistanceFieldDebug.texture = $DistanceField.get_texture()
-	$DebugRTT/VoronoiSeedDebug.texture = $VoronoiSeed.get_texture()
-	
+	# move the scene to the correct viewport for rendering
 	_main_scene = $MainScene
 	_light = $MainScene/Light
 	remove_child($MainScene)
@@ -78,54 +74,46 @@ func _ready():
 	_on_RaysPerPixelSlider_value_changed(32)
 	_on_EmissionMultiSlider_value_changed(1.5)
 	_on_EmissionRangeSlider_value_changed(2.0)
+	_on_EmissionDropoffSlider_value_changed(2.0)
 	
 func _process(delta):
 	
-	_timer += delta
-	$GI.set_shader_param("u_time", _timer)
+	# debug menu blocks mouse
+	var debug_blocking = $Controls/Control/TabContainer.get_global_rect().has_point(get_global_mouse_position()) and $Controls/Control/TabContainer.visible
+	debug_blocking = debug_blocking or $Controls/Control/Minimise.get_global_rect().has_point(get_global_mouse_position())
+	debug_blocking = debug_blocking or $Controls/Control/Move.get_global_rect().has_point(get_global_mouse_position())
 	
-	_ball_timer -= delta
-	if Input.is_action_pressed("ui_click") and not $Controls/TabContainer.get_rect().has_point(get_global_mouse_position()):
+	if Input.is_action_pressed("ui_click") and not debug_blocking:
 		if _mouse_spawn:
+			_ball_timer -= delta
 			if _ball_timer < 0.0:
 				var ball = ball_scene.instance()
 				_main_scene.add_child(ball)
 				var sprite = ball.get_child(0)
-			
-				match _rng.randi_range(0, 4):
-					0: 
-						sprite.modulate = Color.aqua
-					1: 
-						sprite.modulate = Color.cornsilk
-					2: 
-						sprite.modulate = Color.fuchsia
-					3: 
-						sprite.modulate = Color.limegreen
-					4: 
-						sprite.modulate = Color.yellow
-						
 				var colour = Vector3(_rng.randf(), _rng.randf(), _rng.randf()).normalized()
 				sprite.modulate = Color(colour.x, colour.y, colour.z)
 				sprite.set_emissive(1.0)
 				sprite.set_colour(sprite.modulate)
-			
-				#ball.position = Vector2(_rng.randf_range(15.0, get_viewport().size.x - 15.0), 25.0)
 				ball.position = get_global_mouse_position()
 				_ball_timer = ball_frequency
 		else:
 			_light.position = get_global_mouse_position()
 				
-	$DebugRTT/FPS.text = String(Engine.get_frames_per_second())
+	$Screen/FPS.text = String(Engine.get_frames_per_second())
+	
+	if _moving_debug:
+		var mouse_delta = get_global_mouse_position() - _moving_debug_press_start
+		$Controls/Control.rect_position = _debug_init_pos + mouse_delta
+		if Input.is_action_just_released("ui_click"):
+			_moving_debug = false
 		
 func _setup_voronoi_pipeline():
 	
-	# voronoi
 	$VoronoiSeed.set_size(get_viewport().size)
 	$VoronoiSeed/Texture.get_material().set_shader_param("u_input_tex", $SceneBuffer.get_texture())
 	$VoronoiSeed/Texture.rect_size = get_viewport().size
 		
-	var passes = log(max(get_viewport().size.x, get_viewport().size.y)) / log(2.0)
-	
+	var passes = log(max(get_viewport().size.x, get_viewport().size.y)) / log(2.0)	
 	for i in range(0, passes):
 		var offset = pow(2, passes - i - 1)
 		var buffer = voronoi_buffer_scene.instance()
@@ -137,7 +125,6 @@ func _setup_voronoi_pipeline():
 			input_texture = _voronoi_buffers[i - 1].get_texture()
 			
 		buffer.setup(i, passes, offset, input_texture, get_viewport().size)
-		#print("setup voronoi with offset %d" % [offset])
 	
 	# distance field
 	$DistanceField.set_size(get_viewport().size)
@@ -160,8 +147,6 @@ func _setup_GI_pipeline():
 	$GI.set_shader_param("u_last_frame_data", $LastFrameBuffer.get_texture())
 	$GI.set_shader_param("u_dist_mod", 10.0)
 	$GI.set_shader_param("u_rays_per_pixel", 32)
-	
-""" PUBLIC """
 
 func _on_Final_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $GI.get_texture())
 func _on_Scene_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $SceneBuffer.get_texture())
@@ -176,12 +161,12 @@ func _on_VoronoiPass5_pressed(): $Screen/Screen.get_material().set_shader_param(
 func _on_VoronoiPass6_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[5].get_texture())
 func _on_VoronoiPass7_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[6].get_texture())
 func _on_VoronoiPass8_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[7].get_texture())
-func _on_VoronoiPass9_pressed(): $Screen/Screen.get_material().set_shader_param("texture_to_draw", _voronoi_buffers[8].get_texture())
+func _on_VoronoiPass9_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[8].get_texture())
 func _on_DistanceField_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $DistanceField.get_texture())
 
 func _on_RaysPerPixelSlider_value_changed(value):
 	$GI.set_shader_param("u_rays_per_pixel", value)
-	$Controls/TabContainer/Params/RaysPerPixel/RaysPerPixel.text = String(value)
+	$Controls/Control/TabContainer/Params/RaysPerPixel/RaysPerPixel.text = String(value)
 
 func _on_LightBounceButton_toggled(button_pressed):
 	$GI.set_shader_param("u_bounce", button_pressed)
@@ -192,22 +177,60 @@ func _on_DeNoiseButton_toggled(button_pressed):
 func _on_DistanceModSlider_value_changed(value):
 	$GI.set_shader_param("u_dist_mod", value)
 	$DistanceField/Texture.get_material().set_shader_param("u_dist_mod", value)
-	$Controls/TabContainer/Params/DistanceMod/DistanceMod.text = "%05.2f" % value
+	$Controls/Control/TabContainer/Params/DistanceMod/DistanceMod.text = "%05.2f" % value
 
 func _on_FreezeButton_toggled(button_pressed):
 	Engine.time_scale = 1.0 * int(!button_pressed)
 
 func _on_EmissionMultiSlider_value_changed(value):
 	$GI.set_shader_param("u_emission_multi", value)
-	$Controls/TabContainer/Params/EmissionMulti/EmissionMulti.text = "%05.2f" % value
+	$Controls/Control/TabContainer/Params/EmissionMulti/EmissionMulti.text = "%05.2f" % value
 
 func _on_MouseSpawnButton_toggled(button_pressed):
 	_mouse_spawn = button_pressed
 
 func _on_EmissionRangeSlider_value_changed(value):
 	$GI.set_shader_param("u_emission_range", value)
-	$Controls/TabContainer/Params/EmissionRange/EmissionRange.text = "%05.2f" % value
+	$Controls/Control/TabContainer/Params/EmissionRange/EmissionRange.text = "%05.2f" % value
 
 func _on_EmissionDropoffSlider_value_changed(value):
 	$GI.set_shader_param("u_emission_dropoff", value)
-	$Controls/TabContainer/Params/EmissionDropoff/EmissionDropoff.text = "%05.2f" % value
+	$Controls/Control/TabContainer/Params/EmissionDropoff/EmissionDropoff.text = "%05.2f" % value
+
+func _on_Minimise_pressed():
+	$Controls/Control/TabContainer.visible = !$Controls/Control/TabContainer.visible
+
+func _on_Move_button_down():
+	_moving_debug = true
+	_debug_init_pos = $Controls/Control.rect_position
+	_moving_debug_press_start = get_global_mouse_position()
+
+func _on_Info_mouse_entered(extra_arg_0):
+	$Controls/Tooltip.visible = true
+	$Controls/Tooltip.rect_position = get_global_mouse_position() - Vector2($Controls/Tooltip.rect_size.x + 10.0, -10.0)
+	
+	if extra_arg_0 == 0:
+		$Controls/Tooltip/Label.text = "Number of rays (light probes) sent out per pixel per frame. Each ray that hits an emissive surface adds to the brightness (and colour) of this pixel."
+	if extra_arg_0 == 1:
+		$Controls/Tooltip/Label.text = "Modifies maximum distance a ray travels in a step. See DistanceField RTT. Reducing this will reduce number of steps (thus samples) to reach surface, but reduce the precision to detect surface."
+	if extra_arg_0 == 2:
+		$Controls/Tooltip/Label.text = "Modifies emission so surfaces can be brighter than 1.0."
+	if extra_arg_0 == 3:
+		$Controls/Tooltip/Label.text = "Range of light. Increasing this will make light travel further before dimming."
+	if extra_arg_0 == 4:
+		$Controls/Tooltip/Label.text = "Light drop-off. Increasing this will make light get dimmer faster. Similar to range."
+	if extra_arg_0 == 5:
+		$Controls/Tooltip/Label.text = "Whether light bounces off surfaces. Due to the nature of the implementation, bounces are either off or infinite (i.e. until the bounced light is imperceptibly dim)."
+	if extra_arg_0 == 6:
+		$Controls/Tooltip/Label.text = "Whether to 'soften' the noise by averaging with previous frames. Not particularly effective at the moment."
+	if extra_arg_0 == 7:
+		$Controls/Tooltip/Label.text = "Reduce time_scale to 0, also stops the time-based ray direction randomisation, so noise will also freeze."
+	if extra_arg_0 == 8:
+		$Controls/Tooltip/Label.text = "Toggles between the mouse moving the single point light, and spawning multicoloured balls."
+			
+func _on_Info_mouse_exited():
+	$Controls/Tooltip.visible = false
+	$Controls/Tooltip.rect_size = Vector2(0.0, 0.0)
+	$Controls/Tooltip/Label.rect_size = Vector2(0.0, 0.0)
+
+""" PUBLIC """

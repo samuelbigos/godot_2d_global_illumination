@@ -18,6 +18,7 @@ vec3 lin_to_srgb(vec3 color)
 void fragment() 
 {
 	vec4 sample = texture(u_texture_to_draw, UV);
+	sample.a = 1.0;
 	if(u_sRGB)
 		COLOR = vec4(lin_to_srgb(sample.xyz), sample.a);
 	else
