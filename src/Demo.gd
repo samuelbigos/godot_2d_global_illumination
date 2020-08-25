@@ -59,6 +59,8 @@ func _ready():
 	# set correct render pass order
 	VisualServer.viewport_set_active(GI.emissive_map.get_viewport_rid(), false)
 	VisualServer.viewport_set_active(GI.emissive_map.get_viewport_rid(), true)
+	VisualServer.viewport_set_active(GI.colour_map.get_viewport_rid(), false)
+	VisualServer.viewport_set_active(GI.colour_map.get_viewport_rid(), true)
 	VisualServer.viewport_set_active($SceneBuffer.get_viewport_rid(), false)
 	VisualServer.viewport_set_active($SceneBuffer.get_viewport_rid(), true)
 	VisualServer.viewport_set_active($VoronoiSeed.get_viewport_rid(), false)
@@ -73,11 +75,22 @@ func _ready():
 	VisualServer.viewport_set_active($GI.get_viewport_rid(), false)
 	VisualServer.viewport_set_active($GI.get_viewport_rid(), true)
 	
+	# disable default viewport render
+	GI.emissive_map.render_target_update_mode = Viewport.UPDATE_ONCE
+	GI.colour_map.render_target_update_mode = Viewport.UPDATE_ONCE
+	$SceneBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
+	$VoronoiSeed.render_target_update_mode = Viewport.UPDATE_ONCE
+	for i in _voronoi_buffers:
+		i.render_target_update_mode = Viewport.UPDATE_ONCE
+	$DistanceField.render_target_update_mode = Viewport.UPDATE_ONCE
+	$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
+	$GI.render_target_update_mode = Viewport.UPDATE_ONCE
+	
 	# setup initial control options
-	_on_DistanceModSlider_value_changed(10.0)
+	_on_DistanceModSlider_value_changed(5.0)
 	_on_RaysPerPixelSlider_value_changed(32)
-	_on_EmissionMultiSlider_value_changed(2.0)
-	_on_EmissionRangeSlider_value_changed(4.0)
+	_on_EmissionMultiSlider_value_changed(1.5)
+	_on_EmissionRangeSlider_value_changed(2.0)
 	_on_EmissionDropoffSlider_value_changed(2.0)
 	_on_WallColourCheck_toggled(true)
 	_on_DeNoiseButton_toggled(false)
@@ -89,6 +102,8 @@ func _process(delta):
 	debug_blocking = debug_blocking or $Controls/Control/Minimise.get_global_rect().has_point(get_global_mouse_position())
 	debug_blocking = debug_blocking or $Controls/Control/Move.get_global_rect().has_point(get_global_mouse_position())
 	
+	var dirty = false
+	
 	_ball_timer -= delta
 	if Input.is_action_pressed("ui_click") and not debug_blocking:
 		if _mouse_spawn:			
@@ -98,12 +113,13 @@ func _process(delta):
 				var sprite = ball.get_child(0)
 				var colour = Vector3(_rng.randf(), _rng.randf(), _rng.randf()).normalized()
 				sprite.modulate = Color(colour.x, colour.y, colour.z)
-				sprite.set_emissive(0.5)
+				sprite.set_emissive(1.0)
 				sprite.set_colour(sprite.modulate)
 				ball.position = get_global_mouse_position()
 				_ball_timer = ball_frequency
 		else:
 			_light.position = get_global_mouse_position()
+			dirty = true
 				
 	$Screen/FPS.text = String(Engine.get_frames_per_second())
 	
@@ -112,14 +128,27 @@ func _process(delta):
 		$Controls/Control.rect_position = _debug_init_pos + mouse_delta
 		if Input.is_action_just_released("ui_click"):
 			_moving_debug = false
+	
+	dirty = true
+	if dirty:
+		GI.emissive_map.render_target_update_mode = Viewport.UPDATE_ONCE
+		GI.colour_map.render_target_update_mode = Viewport.UPDATE_ONCE
+		$SceneBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
+		$VoronoiSeed.render_target_update_mode = Viewport.UPDATE_ONCE
+		for i in _voronoi_buffers:
+			i.render_target_update_mode = Viewport.UPDATE_ONCE
+		$DistanceField.render_target_update_mode = Viewport.UPDATE_ONCE
+	
+	$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
+	$GI.render_target_update_mode = Viewport.UPDATE_ONCE
 		
 func _setup_voronoi_pipeline():
 	
 	$VoronoiSeed.set_size(get_viewport().size)
 	$VoronoiSeed/Texture.get_material().set_shader_param("u_input_tex", $SceneBuffer.get_texture())
 	$VoronoiSeed/Texture.rect_size = get_viewport().size
-		
-	var passes = log(max(get_viewport().size.x, get_viewport().size.y)) / log(2.0)	
+	
+	var passes = ceil(log(max(get_viewport().size.x, get_viewport().size.y)) / log(2.0))
 	for i in range(0, passes):
 		var offset = pow(2, passes - i - 1)
 		var buffer = voronoi_buffer_scene.instance()
@@ -159,15 +188,7 @@ func _on_Scene_pressed(): $Screen/Screen.get_material().set_shader_param("u_text
 func _on_Colour_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", GI.colour_map.get_texture())
 func _on_Emissive_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", GI.emissive_map.get_texture())
 func _on_VoronoiSeed_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $VoronoiSeed.get_texture())
-func _on_VoronoiPass1_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[0].get_texture())
-func _on_VoronoiPass2_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[1].get_texture())
-func _on_VoronoiPass3_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[2].get_texture())
-func _on_VoronoiPass4_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[3].get_texture())
-func _on_VoronoiPass5_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[4].get_texture())
-func _on_VoronoiPass6_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[5].get_texture())
-func _on_VoronoiPass7_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[6].get_texture())
-func _on_VoronoiPass8_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[7].get_texture())
-func _on_VoronoiPass9_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[8].get_texture())
+func _on_Voronoi_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", _voronoi_buffers[_voronoi_buffers.size() - 1].get_texture())
 func _on_DistanceField_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $DistanceField.get_texture())
 
 func _on_RaysPerPixelSlider_value_changed(value):

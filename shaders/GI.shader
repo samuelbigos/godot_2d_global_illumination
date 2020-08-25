@@ -20,13 +20,15 @@ uniform float u_emission_dropoff = 2.0;
 
 float epsilon()
 {
-	return 0.5 / u_resolution.x;
+	return 0.5 / max(u_resolution.x, u_resolution.y);
 }
 
 void get_material(vec2 uv, vec4 hit_data, out float emissive, out vec3 colour)
 {	
 	if(hit_data.x / u_dist_mod < epsilon())
 	{
+		float inv_aspect = u_resolution.y / u_resolution.x;
+		uv.x *= inv_aspect;
 		vec4 emissive_data = texture(u_scene_emissive_data, uv);
 		vec4 colour_data = texture(u_scene_colour_data, uv);
 		emissive = emissive_data.r * u_emission_multi;
@@ -41,6 +43,8 @@ void get_material(vec2 uv, vec4 hit_data, out float emissive, out vec3 colour)
 
 float map(vec2 uv, out vec4 hit_data)
 {
+	float inv_aspect = u_resolution.y / u_resolution.x;
+	uv.x *= inv_aspect;
 	hit_data = texture(u_distance_data, uv);
 	float d = hit_data.x / u_dist_mod;
     return d;
@@ -52,7 +56,7 @@ bool raymarch(vec2 origin, vec2 ray, out vec2 hit_pos, out vec4 hit_data, out fl
 	float prev_dist = 1.0;
 	float step_dist = 1.0;
 	vec2 sample_point;
-	for(int i = 0; i < 32; i++)
+	for(int i = 0; i < 64; i++)
 	{
 		sample_point = origin + ray * t;
 		step_dist = map(sample_point, hit_data);
@@ -61,17 +65,16 @@ bool raymarch(vec2 origin, vec2 ray, out vec2 hit_pos, out vec4 hit_data, out fl
 			hit_pos = sample_point;
   			return true;
 		}
-		
+		step_dist = max(step_dist, min(1.0 / u_resolution.x, 1.0 / u_resolution.y));
 		t += step_dist;
 		ray_dist = t;
 	}
 	return false;
 }
 
-void get_last_frame_data(vec2 uv, out float last_emission, out vec3 last_colour)
+void get_last_frame_data(vec2 uv, vec2 pix, out float last_emission, out vec3 last_colour)
 {
 	last_emission = 0.0;
-	vec2 pix = 1.0 / u_resolution.xy;
 	for(int x = -1; x <= 1; x++)
 	{
 		for(int y = -1; y <= 1; y++)
@@ -123,7 +126,7 @@ void fragment()
 			{
 				if(mat_emissive < epsilon()) // This determines if emissive surfaces themselves can bounce light.
 				{
-					get_last_frame_data(st, last_emission, last_colour);
+					get_last_frame_data(st, SCREEN_PIXEL_SIZE, last_emission, last_colour);
 				}
 				if(ray_dist < epsilon()) // So light doesn't bounce off the surface it was emitted from.
 					last_emission = 0.0;
@@ -144,12 +147,14 @@ void fragment()
 	if(u_denoise)
 	{
 		vec4 last_9x9_average = vec4(0.0);
-		vec2 pix = 1.0 / u_resolution.xy;
+		vec2 pix = SCREEN_PIXEL_SIZE;
 		for(int x = -1; x <= 1; x++)
 		{
 			for(int y = -1; y <= 1; y++)
 			{ 
-				last_9x9_average += texture(u_last_frame_data, uv + pix * vec2(float(x), float(y)));
+				vec2 st = uv;
+				st.x *= inv_aspect;
+				last_9x9_average += texture(u_last_frame_data, st + pix * vec2(float(x), float(y)));
 			}
 		}
 		last_9x9_average = last_9x9_average / 9.0;

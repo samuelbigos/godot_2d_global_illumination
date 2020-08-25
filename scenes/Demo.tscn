@@ -74,6 +74,7 @@ __meta__ = {
 [node name="FPS" type="Label" parent="Screen"]
 margin_right = 40.0
 margin_bottom = 14.0
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 text = "0"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -82,10 +83,10 @@ __meta__ = {
 [node name="Controls" type="CanvasLayer" parent="."]
 
 [node name="Control" type="Control" parent="Controls"]
-margin_left = 232.0
-margin_top = 16.0
-margin_right = 272.0
-margin_bottom = 56.0
+margin_left = 480.0
+margin_top = 24.0
+margin_right = 520.0
+margin_bottom = 64.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -575,7 +576,6 @@ __meta__ = {
 [node name="GridContainer" type="GridContainer" parent="Controls/Control/TabContainer/RTTs"]
 margin_right = 254.0
 margin_bottom = 116.0
-columns = 2
 
 [node name="Final" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_right = 96.0
@@ -606,65 +606,12 @@ margin_right = 96.0
 margin_bottom = 44.0
 text = "Voronoi Seed"
 
-[node name="VoronoiPass1" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
+[node name="Voronoi" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 100.0
 margin_top = 24.0
 margin_right = 175.0
 margin_bottom = 44.0
-text = "V-Pass #1"
-
-[node name="VoronoiPass2" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
-margin_left = 179.0
-margin_top = 24.0
-margin_right = 254.0
-margin_bottom = 44.0
-text = "V-Pass #2"
-
-[node name="VoronoiPass3" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
-margin_top = 48.0
-margin_right = 96.0
-margin_bottom = 68.0
-text = "V-Pass #3"
-
-[node name="VoronoiPass4" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
-margin_left = 100.0
-margin_top = 48.0
-margin_right = 175.0
-margin_bottom = 68.0
-text = "V-Pass #4"
-
-[node name="VoronoiPass5" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
-margin_left = 179.0
-margin_top = 48.0
-margin_right = 254.0
-margin_bottom = 68.0
-text = "V-Pass #5"
-
-[node name="VoronoiPass6" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
-margin_top = 72.0
-margin_right = 96.0
-margin_bottom = 92.0
-text = "V-Pass #6"
-
-[node name="VoronoiPass7" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
-margin_left = 100.0
-margin_top = 72.0
-margin_right = 175.0
-margin_bottom = 92.0
-text = "V-Pass #7"
-
-[node name="VoronoiPass8" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
-margin_left = 179.0
-margin_top = 72.0
-margin_right = 254.0
-margin_bottom = 92.0
-text = "V-Pass #8"
-
-[node name="VoronoiPass9" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
-margin_top = 96.0
-margin_right = 96.0
-margin_bottom = 116.0
-text = "V-Pass #9"
+text = "Voronoi"
 
 [node name="DistanceField" type="Button" parent="Controls/Control/TabContainer/RTTs/GridContainer"]
 margin_left = 100.0
@@ -760,8 +707,8 @@ texture = ExtResource( 12 )
 texture = ExtResource( 12 )
 
 [node name="Top" type="Sprite" parent="MainScene"]
-position = Vector2( 256, 0 )
-scale = Vector2( 512.002, 16 )
+position = Vector2( 383.279, 0 )
+scale = Vector2( 783.531, 16 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -782,9 +729,8 @@ texture = ExtResource( 11 )
 shape = SubResource( 7 )
 
 [node name="Bottom" type="Sprite" parent="MainScene"]
-position = Vector2( 284.645, 507.243 )
-rotation = -0.171395
-scale = Vector2( 359.26, 16 )
+position = Vector2( 385.636, 510.561 )
+scale = Vector2( 545.248, 16 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -827,7 +773,7 @@ texture = ExtResource( 11 )
 shape = SubResource( 7 )
 
 [node name="Right" type="Sprite" parent="MainScene"]
-position = Vector2( 512, 256 )
+position = Vector2( 768, 256 )
 scale = Vector2( 16, 512 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
@@ -849,9 +795,9 @@ texture = ExtResource( 11 )
 shape = SubResource( 7 )
 
 [node name="Slope1" type="Sprite" parent="MainScene"]
-position = Vector2( 144.242, 121.907 )
+position = Vector2( 168.099, 127.583 )
 rotation = 0.275176
-scale = Vector2( 291.678, 9.16205 )
+scale = Vector2( 341.257, 9.16205 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -871,10 +817,33 @@ texture = ExtResource( 11 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope1/StaticBody2D"]
 shape = SubResource( 7 )
 
+[node name="Slope3" type="Sprite" parent="MainScene"]
+position = Vector2( 535.764, 126.236 )
+rotation = 0.148636
+scale = Vector2( 210.748, 9.16205 )
+texture = ExtResource( 11 )
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Slope3"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 11 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Slope3"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 11 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope3/StaticBody2D"]
+shape = SubResource( 7 )
+
 [node name="Slope2" type="Sprite" parent="MainScene"]
-position = Vector2( 438.509, 194.053 )
-rotation = -0.318262
-scale = Vector2( 184.074, 9.16205 )
+position = Vector2( 632.996, 209.048 )
+rotation = -0.19827
+scale = Vector2( 279.914, 9.16205 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -895,9 +864,9 @@ texture = ExtResource( 11 )
 shape = SubResource( 7 )
 
 [node name="Slope5" type="Sprite" parent="MainScene"]
-position = Vector2( 185.761, 264.556 )
+position = Vector2( 241.207, 274.572 )
 rotation = 0.0214005
-scale = Vector2( 235.513, 9.16205 )
+scale = Vector2( 330.427, 9.16205 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -918,9 +887,9 @@ texture = ExtResource( 11 )
 shape = SubResource( 7 )
 
 [node name="Slope6" type="Sprite" parent="MainScene"]
-position = Vector2( 392.514, 342.564 )
-rotation = 3.01758
-scale = Vector2( 249.041, 9.16205 )
+position = Vector2( 424.563, 374.436 )
+rotation = 2.85222
+scale = Vector2( 144.806, 9.16205 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -938,6 +907,29 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope6"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope6/StaticBody2D"]
+shape = SubResource( 7 )
+
+[node name="Slope8" type="Sprite" parent="MainScene"]
+position = Vector2( 618.563, 387.436 )
+rotation = 3.48523
+scale = Vector2( 144.806, 9.16205 )
+texture = ExtResource( 11 )
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="EmissiveSprite" type="Sprite" parent="MainScene/Slope8"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 11 )
+
+[node name="AlbedoSprite" type="Sprite" parent="MainScene/Slope8"]
+modulate = Color( 0, 0, 0, 1 )
+texture = ExtResource( 11 )
+
+[node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope8"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope8/StaticBody2D"]
 shape = SubResource( 7 )
 
 [node name="Slope7" type="Sprite" parent="MainScene"]
@@ -999,15 +991,7 @@ shape = SubResource( 7 )
 [connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/Colour" to="." method="_on_Colour_pressed"]
 [connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/Emissive" to="." method="_on_Emissive_pressed"]
 [connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiSeed" to="." method="_on_VoronoiSeed_pressed"]
-[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass1" to="." method="_on_VoronoiPass1_pressed"]
-[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass2" to="." method="_on_VoronoiPass2_pressed"]
-[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass3" to="." method="_on_VoronoiPass3_pressed"]
-[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass4" to="." method="_on_VoronoiPass4_pressed"]
-[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass5" to="." method="_on_VoronoiPass5_pressed"]
-[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass6" to="." method="_on_VoronoiPass6_pressed"]
-[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass7" to="." method="_on_VoronoiPass7_pressed"]
-[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass8" to="." method="_on_VoronoiPass8_pressed"]
-[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/VoronoiPass9" to="." method="_on_VoronoiPass9_pressed"]
+[connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/Voronoi" to="." method="_on_Voronoi_pressed"]
 [connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/DistanceField" to="." method="_on_DistanceField_pressed"]
 [connection signal="pressed" from="Controls/Control/Minimise" to="." method="_on_Minimise_pressed"]
 [connection signal="button_down" from="Controls/Control/Move" to="." method="_on_Move_button_down"]
