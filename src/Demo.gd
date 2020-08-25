@@ -80,6 +80,7 @@ func _ready():
 	_on_EmissionRangeSlider_value_changed(4.0)
 	_on_EmissionDropoffSlider_value_changed(2.0)
 	_on_WallColourCheck_toggled(true)
+	_on_DeNoiseButton_toggled(false)
 	
 func _process(delta):
 	

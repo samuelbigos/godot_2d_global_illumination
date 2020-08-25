@@ -22,23 +22,23 @@ resource_local_to_scene = true
 shader = ExtResource( 5 )
 shader_param/u_sRGB = true
 
-[sub_resource type="ButtonGroup" id=9]
+[sub_resource type="ButtonGroup" id=2]
 
-[sub_resource type="ShaderMaterial" id=4]
+[sub_resource type="ShaderMaterial" id=3]
 resource_local_to_scene = true
 shader = ExtResource( 3 )
 
-[sub_resource type="ShaderMaterial" id=5]
+[sub_resource type="ShaderMaterial" id=4]
 resource_local_to_scene = true
 shader = ExtResource( 4 )
 shader_param/u_dist_mod = 1.0
 
-[sub_resource type="ShaderMaterial" id=6]
+[sub_resource type="ShaderMaterial" id=5]
 resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource( 2 )
 
-[sub_resource type="ShaderMaterial" id=7]
+[sub_resource type="ShaderMaterial" id=6]
 resource_local_to_scene = true
 shader = ExtResource( 1 )
 shader_param/PI = 3.1416
@@ -52,7 +52,7 @@ shader_param/u_emission_range = 2.0
 shader_param/u_emission_dropoff = 2.0
 shader_param/u_noise_data = ExtResource( 13 )
 
-[sub_resource type="RectangleShape2D" id=8]
+[sub_resource type="RectangleShape2D" id=7]
 extents = Vector2( 0.49991, 0.49998 )
 
 [node name="Demo" type="Node2D"]
@@ -409,7 +409,6 @@ margin_top = -13.0
 focus_mode = 0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-pressed = true
 enabled_focus_mode = 0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -531,7 +530,7 @@ margin_left = 145.0
 margin_right = 169.0
 margin_bottom = 24.0
 pressed = true
-group = SubResource( 9 )
+group = SubResource( 2 )
 
 [node name="B" type="Label" parent="Controls/Control/TabContainer/Params/Walls"]
 margin_left = 173.0
@@ -545,7 +544,7 @@ align = 2
 margin_left = 186.0
 margin_right = 210.0
 margin_bottom = 24.0
-group = SubResource( 9 )
+group = SubResource( 2 )
 
 [node name="C" type="Label" parent="Controls/Control/TabContainer/Params/Walls"]
 margin_left = 214.0
@@ -559,7 +558,7 @@ align = 2
 margin_left = 226.0
 margin_right = 250.0
 margin_bottom = 24.0
-group = SubResource( 9 )
+group = SubResource( 2 )
 
 [node name="RTTs" type="VBoxContainer" parent="Controls/Control/TabContainer"]
 visible = false
@@ -722,7 +721,7 @@ render_target_v_flip = true
 render_target_update_mode = 3
 
 [node name="Texture" type="TextureRect" parent="VoronoiSeed"]
-material = SubResource( 4 )
+material = SubResource( 3 )
 texture = ExtResource( 11 )
 expand = true
 
@@ -731,7 +730,7 @@ render_target_v_flip = true
 render_target_update_mode = 3
 
 [node name="Texture" type="TextureRect" parent="DistanceField"]
-material = SubResource( 5 )
+material = SubResource( 4 )
 margin_right = 40.0
 margin_bottom = 40.0
 texture = ExtResource( 11 )
@@ -739,12 +738,13 @@ expand = true
 
 [node name="LastFrameBuffer" parent="." instance=ExtResource( 8 )]
 transparent_bg = true
-material = SubResource( 6 )
+hdr = true
+material = SubResource( 5 )
 
 [node name="GI" parent="." instance=ExtResource( 8 )]
 transparent_bg = true
 hdr = true
-material = SubResource( 7 )
+material = SubResource( 6 )
 
 [node name="MainScene" type="Node2D" parent="."]
 
@@ -779,7 +779,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Top"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Top/StaticBody2D"]
-shape = SubResource( 8 )
+shape = SubResource( 7 )
 
 [node name="Bottom" type="Sprite" parent="MainScene"]
 position = Vector2( 284.645, 507.243 )
@@ -802,7 +802,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Bottom"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Bottom/StaticBody2D"]
-shape = SubResource( 8 )
+shape = SubResource( 7 )
 
 [node name="Left" type="Sprite" parent="MainScene"]
 position = Vector2( 0, 256 )
@@ -824,7 +824,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Left"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Left/StaticBody2D"]
-shape = SubResource( 8 )
+shape = SubResource( 7 )
 
 [node name="Right" type="Sprite" parent="MainScene"]
 position = Vector2( 512, 256 )
@@ -846,7 +846,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Right"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Right/StaticBody2D"]
-shape = SubResource( 8 )
+shape = SubResource( 7 )
 
 [node name="Slope1" type="Sprite" parent="MainScene"]
 position = Vector2( 144.242, 121.907 )
@@ -869,7 +869,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope1"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope1/StaticBody2D"]
-shape = SubResource( 8 )
+shape = SubResource( 7 )
 
 [node name="Slope2" type="Sprite" parent="MainScene"]
 position = Vector2( 438.509, 194.053 )
@@ -892,7 +892,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope2"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope2/StaticBody2D"]
-shape = SubResource( 8 )
+shape = SubResource( 7 )
 
 [node name="Slope5" type="Sprite" parent="MainScene"]
 position = Vector2( 185.761, 264.556 )
@@ -915,7 +915,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope5"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope5/StaticBody2D"]
-shape = SubResource( 8 )
+shape = SubResource( 7 )
 
 [node name="Slope6" type="Sprite" parent="MainScene"]
 position = Vector2( 392.514, 342.564 )
@@ -938,7 +938,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope6"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope6/StaticBody2D"]
-shape = SubResource( 8 )
+shape = SubResource( 7 )
 
 [node name="Slope7" type="Sprite" parent="MainScene"]
 position = Vector2( 152.559, 397.125 )
@@ -961,7 +961,7 @@ texture = ExtResource( 11 )
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Slope7"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope7/StaticBody2D"]
-shape = SubResource( 8 )
+shape = SubResource( 7 )
 [connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/RaysPerPixel/Info" to="." method="_on_Info_mouse_entered" binds= [ 0 ]]
 [connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/RaysPerPixel/Info" to="." method="_on_Info_mouse_exited"]
 [connection signal="value_changed" from="Controls/Control/TabContainer/Params/RaysPerPixel/RaysPerPixelSlider" to="." method="_on_RaysPerPixelSlider_value_changed"]
