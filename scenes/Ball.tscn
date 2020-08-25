@@ -3,10 +3,9 @@
 [ext_resource path="res://assets/circle.png" type="Texture" id=1]
 [ext_resource path="res://src/GI_Sprite.gd" type="Script" id=2]
 
-
 [sub_resource type="PhysicsMaterial" id=1]
 friction = 0.0
-bounce = 1.0
+bounce = 0.5
 
 [sub_resource type="CircleShape2D" id=2]
 radius = 9.31528

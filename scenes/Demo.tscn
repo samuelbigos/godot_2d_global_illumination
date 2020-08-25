@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://shaders/GI.shader" type="Shader" id=1]
 [ext_resource path="res://shaders/LastFrameRender.shader" type="Shader" id=2]
@@ -21,6 +21,8 @@
 resource_local_to_scene = true
 shader = ExtResource( 5 )
 shader_param/u_sRGB = true
+
+[sub_resource type="ButtonGroup" id=9]
 
 [sub_resource type="ShaderMaterial" id=4]
 resource_local_to_scene = true
@@ -269,7 +271,7 @@ margin_right = 226.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
 min_value = 0.1
-max_value = 5.0
+max_value = 10.0
 step = 0.1
 value = 1.0
 __meta__ = {
@@ -493,6 +495,72 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="HSeparator9" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
+margin_top = 298.0
+margin_right = 250.0
+margin_bottom = 302.0
+
+[node name="Walls" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
+margin_top = 306.0
+margin_right = 250.0
+margin_bottom = 330.0
+
+[node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/Walls"]
+margin_right = 16.0
+margin_bottom = 24.0
+icon = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/Walls"]
+margin_left = 20.0
+margin_top = 5.0
+margin_right = 128.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+text = "Walls:"
+
+[node name="A" type="Label" parent="Controls/Control/TabContainer/Params/Walls"]
+margin_left = 132.0
+margin_top = 5.0
+margin_right = 141.0
+margin_bottom = 19.0
+text = "A"
+align = 2
+
+[node name="WallColourCheck" type="CheckBox" parent="Controls/Control/TabContainer/Params/Walls"]
+margin_left = 145.0
+margin_right = 169.0
+margin_bottom = 24.0
+pressed = true
+group = SubResource( 9 )
+
+[node name="B" type="Label" parent="Controls/Control/TabContainer/Params/Walls"]
+margin_left = 173.0
+margin_top = 5.0
+margin_right = 182.0
+margin_bottom = 19.0
+text = "B"
+align = 2
+
+[node name="WallWhiteCheck" type="CheckBox" parent="Controls/Control/TabContainer/Params/Walls"]
+margin_left = 186.0
+margin_right = 210.0
+margin_bottom = 24.0
+group = SubResource( 9 )
+
+[node name="C" type="Label" parent="Controls/Control/TabContainer/Params/Walls"]
+margin_left = 214.0
+margin_top = 5.0
+margin_right = 222.0
+margin_bottom = 19.0
+text = "C"
+align = 2
+
+[node name="WallBlackCheck" type="CheckBox" parent="Controls/Control/TabContainer/Params/Walls"]
+margin_left = 226.0
+margin_right = 250.0
+margin_bottom = 24.0
+group = SubResource( 9 )
+
 [node name="RTTs" type="VBoxContainer" parent="Controls/Control/TabContainer"]
 visible = false
 anchor_right = 1.0
@@ -675,6 +743,7 @@ material = SubResource( 6 )
 
 [node name="GI" parent="." instance=ExtResource( 8 )]
 transparent_bg = true
+hdr = true
 material = SubResource( 7 )
 
 [node name="MainScene" type="Node2D" parent="."]
@@ -704,7 +773,7 @@ modulate = Color( 0, 0, 0, 1 )
 texture = ExtResource( 11 )
 
 [node name="AlbedoSprite" type="Sprite" parent="MainScene/Top"]
-modulate = Color( 0, 0, 0, 1 )
+modulate = Color( 1, 0, 0, 1 )
 texture = ExtResource( 11 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Top"]
@@ -749,7 +818,7 @@ modulate = Color( 0, 0, 0, 1 )
 texture = ExtResource( 11 )
 
 [node name="AlbedoSprite" type="Sprite" parent="MainScene/Left"]
-modulate = Color( 0, 0, 0, 1 )
+modulate = Color( 0, 0.505882, 1, 1 )
 texture = ExtResource( 11 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Left"]
@@ -771,7 +840,7 @@ modulate = Color( 0, 0, 0, 1 )
 texture = ExtResource( 11 )
 
 [node name="AlbedoSprite" type="Sprite" parent="MainScene/Right"]
-modulate = Color( 0, 0, 0, 1 )
+modulate = Color( 0.686275, 1, 0, 1 )
 texture = ExtResource( 11 )
 
 [node name="StaticBody2D" type="StaticBody2D" parent="MainScene/Right"]
@@ -920,6 +989,11 @@ shape = SubResource( 8 )
 [connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/MouseSpawn/Info" to="." method="_on_Info_mouse_entered" binds= [ 8 ]]
 [connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/MouseSpawn/Info" to="." method="_on_Info_mouse_exited"]
 [connection signal="toggled" from="Controls/Control/TabContainer/Params/MouseSpawn/Container/MouseSpawnButton" to="." method="_on_MouseSpawnButton_toggled"]
+[connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/Walls/Info" to="." method="_on_Info_mouse_entered" binds= [ 9 ]]
+[connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/Walls/Info" to="." method="_on_Info_mouse_exited"]
+[connection signal="toggled" from="Controls/Control/TabContainer/Params/Walls/WallColourCheck" to="." method="_on_WallColourCheck_toggled"]
+[connection signal="toggled" from="Controls/Control/TabContainer/Params/Walls/WallWhiteCheck" to="." method="_on_WallWhiteCheck_toggled"]
+[connection signal="toggled" from="Controls/Control/TabContainer/Params/Walls/WallBlackCheck" to="." method="_on_WallBlackCheck_toggled"]
 [connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/Final" to="." method="_on_Final_pressed"]
 [connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/Scene" to="." method="_on_Scene_pressed"]
 [connection signal="pressed" from="Controls/Control/TabContainer/RTTs/GridContainer/Colour" to="." method="_on_Colour_pressed"]
