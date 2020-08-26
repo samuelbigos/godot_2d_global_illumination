@@ -12,6 +12,14 @@ Feel free to re-use as much code from here as you want (as per the MIT license) 
 
 However, at this stage, to make use of this in an actual game will require a deep understanding of the algorithms involved and lots of tweaking and fiddling to make things work. I do plan to continue developing this to make it as plug-and-play as possible, but for now it serves as more of a demo and reference for those looking to implement this sort of rendering technology in their game.
 
+## Implementation
+
+The demo uses the Jump Flood algorithm to efficiently generate a Voronoi diagram (which stores the nearest surface for every pixel). The Voronoi diagram is then converted into a distance field.
+
+In the lighting pass, each pixel sends out multiple rays to probe for emissive surfaces. That ray marches using the distance field until it finds a surface, and the pixel adds the surface emission data to itself.
+
+To bounce light, the previous frame is referenced and emissive surfaces from that frame are added to the current frame. This means every frame, light bounces to one additional surface.
+
 ## References
 
 The primary references used when creating this demo were:

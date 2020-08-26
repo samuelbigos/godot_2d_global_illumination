@@ -92,7 +92,7 @@ func _ready():
 	# setup initial debug control options.
 	_on_DistanceModSlider_value_changed(5.0)
 	_on_RaysPerPixelSlider_value_changed(32)
-	_on_MaxRaymarchStepsSlider_value_changed(32)
+	_on_MaxRaymarchStepsSlider_value_changed(64)
 	_on_EmissionMultiSlider_value_changed(1.5)
 	_on_EmissionRangeSlider_value_changed(2.0)
 	_on_EmissionDropoffSlider_value_changed(2.0)
