@@ -43,11 +43,11 @@ func _ready():
 	_setup_voronoi_pipeline()
 	_setup_GI_pipeline()
 		
-	# set default screen output to the final global illumination texture
+	# set default screen output to the final global illumination texture.
 	$Screen/Screen.rect_size = get_viewport().size
 	$Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $GI.get_texture())
 	
-	# move the scene to the correct viewport for rendering
+	# move the scene to the correct viewport for rendering.
 	_walls.append($MainScene/Top)
 	_walls.append($MainScene/Left)
 	_walls.append($MainScene/Right)
@@ -56,10 +56,10 @@ func _ready():
 	remove_child($MainScene)
 	$SceneBuffer.add_child(_main_scene)
 	
-	# set correct render pass order
+	# set correct render pass order.
 	# we need to do this because we created the voronoi pass viewports after the others (which were created on scene load)
-	# which means they will be rendered after the others, which is no good
-	# disabling and activating viewports on the VisualServer wil set the correct order
+	# which means they will be rendered after the others, which is no good. disabling and activating viewports on the 
+	# VisualServer wil set the correct order.
 	VisualServer.viewport_set_active(GI.emissive_map.get_viewport_rid(), false)
 	VisualServer.viewport_set_active(GI.emissive_map.get_viewport_rid(), true)
 	VisualServer.viewport_set_active(GI.colour_map.get_viewport_rid(), false)
@@ -78,7 +78,7 @@ func _ready():
 	VisualServer.viewport_set_active($GI.get_viewport_rid(), false)
 	VisualServer.viewport_set_active($GI.get_viewport_rid(), true)
 	
-	# disable default viewport render so we have the potential to update manually as an optimisation
+	# disable default viewport render so we have the potential to update manually as an optimisation.
 	GI.emissive_map.render_target_update_mode = Viewport.UPDATE_ONCE
 	GI.colour_map.render_target_update_mode = Viewport.UPDATE_ONCE
 	$SceneBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
@@ -89,9 +89,10 @@ func _ready():
 	$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 	$GI.render_target_update_mode = Viewport.UPDATE_ONCE
 	
-	# setup initial debug control options
+	# setup initial debug control options.
 	_on_DistanceModSlider_value_changed(5.0)
 	_on_RaysPerPixelSlider_value_changed(32)
+	_on_MaxRaymarchStepsSlider_value_changed(32)
 	_on_EmissionMultiSlider_value_changed(1.5)
 	_on_EmissionRangeSlider_value_changed(2.0)
 	_on_EmissionDropoffSlider_value_changed(2.0)
@@ -100,12 +101,12 @@ func _ready():
 	
 func _process(delta):
 	
-	# debug menu blocks mouse
+	# debug menu blocks mouse.
 	var debug_blocking = $Controls/Control/TabContainer.get_global_rect().has_point(get_global_mouse_position()) and $Controls/Control/TabContainer.visible
 	debug_blocking = debug_blocking or $Controls/Control/Minimise.get_global_rect().has_point(get_global_mouse_position())
 	debug_blocking = debug_blocking or $Controls/Control/Move.get_global_rect().has_point(get_global_mouse_position())
 	
-	# spawn balls and move light
+	# spawn balls and move light.
 	_ball_timer -= delta
 	if Input.is_action_pressed("ui_click") and not debug_blocking:
 		if _mouse_spawn:			
@@ -132,7 +133,7 @@ func _process(delta):
 			_moving_debug = false
 	
 	# currently unused, but this is so we could potentially not draw viewports if nothing has changed
-	# at the moment every viewport is set to UPDATE_ONCE every frame which is no different to UPDATE_ALWAYS
+	# at the moment every viewport is set to UPDATE_ONCE every frame which is no different to UPDATE_ALWAYS.
 	var dirty = true
 	if dirty:
 		GI.emissive_map.render_target_update_mode = Viewport.UPDATE_ONCE
@@ -152,19 +153,19 @@ func _setup_voronoi_pipeline():
 	$VoronoiSeed/Texture.get_material().set_shader_param("u_input_tex", $SceneBuffer.get_texture())
 	$VoronoiSeed/Texture.rect_size = get_viewport().size
 	
-	# number of passes required is the log2 of the largest viewport dimension rounded up to the nearest power of 2
+	# number of passes required is the log2 of the largest viewport dimension rounded up to the nearest power of 2.
 	# i.e. 768x512 is log2(1024) == 10
 	var passes = ceil(log(max(get_viewport().size.x, get_viewport().size.y)) / log(2.0))
 	for i in range(0, passes):
-		# offset for each pass is half the previous one, starting at half the square resolution rounded up to nearest power 2
-		# i.e. for 768x512 we round up to 1024x1024 and the offset for the first pass is 512x512, then 256x256, etc 
+		# offset for each pass is half the previous one, starting at half the square resolution rounded up to nearest power 2.
+		# i.e. for 768x512 we round up to 1024x1024 and the offset for the first pass is 512x512, then 256x256, etc. 
 		var offset = pow(2, passes - i - 1)
 		var buffer = rtt_scene.instance()
 		add_child(buffer)
 		_voronoi_buffers.append(buffer)
 		
 		# here we set the input texture for each pass, which is the previous pass, unless it's the first pass in which case it's
-		# the seed texture
+		# the seed texture.
 		var input_texture = $VoronoiSeed.get_texture()
 		if i > 0:
 			input_texture = _voronoi_buffers[i - 1].get_texture()
@@ -176,7 +177,7 @@ func _setup_voronoi_pipeline():
 		buffer.set_shader_param("u_offset", offset)
 		buffer.set_shader_param("u_tex", input_texture)
 	
-	# setup the distance field size and input (which is the final voronoi pass)
+	# setup the distance field size and input (which is the final voronoi pass).
 	$DistanceField.set_size(get_viewport().size)
 	$DistanceField/Texture.rect_size = get_viewport().size	
 	$DistanceField/Texture.get_material().set_shader_param("u_input_tex", _voronoi_buffers[passes - 1].get_texture())
@@ -184,7 +185,7 @@ func _setup_voronoi_pipeline():
 	
 func _setup_GI_pipeline():
 
-	# set up GI material size and uniforms
+	# set up GI material size and uniforms.
 	$LastFrameBuffer.set_size(get_viewport().size)
 	$LastFrameBuffer.set_shader_param("u_texture_to_draw", $GI.get_texture())
 	
@@ -196,9 +197,10 @@ func _setup_GI_pipeline():
 	$GI.set_shader_param("u_last_frame_data", $LastFrameBuffer.get_texture())
 	$GI.set_shader_param("u_dist_mod", 10.0)
 	$GI.set_shader_param("u_rays_per_pixel", 32)
+	$GI.set_shader_param("u_max_raymarch_steps", 32)
 
 #
-# This is all debug menu signal handling
+# this is all debug menu signal handling.
 #
 func _on_Final_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $GI.get_texture())
 func _on_Scene_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $SceneBuffer.get_texture())
@@ -213,6 +215,11 @@ func _on_RaysPerPixelSlider_value_changed(value):
 	$Controls/Control/TabContainer/Params/RaysPerPixel/RaysPerPixel.text = String(value)
 	$Controls/Control/TabContainer/Params/RaysPerPixel/RaysPerPixelSlider.value = value
 
+func _on_MaxRaymarchStepsSlider_value_changed(value):
+	$GI.set_shader_param("u_max_raymarch_steps", value)
+	$Controls/Control/TabContainer/Params/MaxRaymarchSteps/MaxRaymarchSteps.text = String(value)
+	$Controls/Control/TabContainer/Params/MaxRaymarchSteps/MaxRaymarchStepsSlider.value = value
+	
 func _on_LightBounceButton_toggled(button_pressed):
 	$GI.set_shader_param("u_bounce", button_pressed)
 
@@ -278,7 +285,9 @@ func _on_Info_mouse_entered(extra_arg_0):
 		$Controls/Tooltip/Label.text = "Toggles between the mouse moving the single point light, and spawning multicoloured balls."
 	if extra_arg_0 == 9:
 		$Controls/Tooltip/Label.text = "(A) Coloured walls. (B) White walls. (C) Black walls. The more saturated the colour, the more light of that colour will be bounced. The algorithm could be improved to mix the incoming light with the surface colour. At the moment, walls will only radiate their colour."
-			
+	if extra_arg_0 == 10:
+		$Controls/Tooltip/Label.text = "After how many raymarch steps should we give up trying to find a surface? Tends to be a trade-off between lighting accuracy and cost. There will be a point where increasing it won't have any effect (since all rays are finding surfaces), this point will depend on scene density, distance mod, etc."
+		
 func _on_Info_mouse_exited():
 	$Controls/Tooltip.visible = false
 	$Controls/Tooltip.rect_size = Vector2(0.0, 0.0)

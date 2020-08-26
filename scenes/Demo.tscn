@@ -54,6 +54,7 @@ shader_param/u_denoise = true
 shader_param/u_emission_multi = 1.0
 shader_param/u_emission_range = 2.0
 shader_param/u_emission_dropoff = 2.0
+shader_param/u_max_raymarch_steps = 32
 shader_param/u_noise_data = ExtResource( 13 )
 
 [sub_resource type="RectangleShape2D" id=8]
@@ -88,9 +89,9 @@ __meta__ = {
 [node name="Controls" type="CanvasLayer" parent="."]
 
 [node name="Control" type="Control" parent="Controls"]
-margin_left = 480.0
+margin_left = 456.0
 margin_top = 24.0
-margin_right = 520.0
+margin_right = 496.0
 margin_bottom = 64.0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -113,14 +114,14 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
-rect_min_size = Vector2( 250, 0 )
+rect_min_size = Vector2( 280, 0 )
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="RaysPerPixel" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
-margin_right = 250.0
+margin_right = 280.0
 margin_bottom = 22.0
 size_flags_horizontal = 3
 
@@ -139,7 +140,7 @@ align = 2
 
 [node name="RaysPerPixelSlider" type="HSlider" parent="Controls/Control/TabContainer/Params/RaysPerPixel"]
 margin_left = 117.0
-margin_right = 230.0
+margin_right = 260.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
 min_value = 1.0
@@ -150,22 +151,66 @@ __meta__ = {
 }
 
 [node name="RaysPerPixel" type="Label" parent="Controls/Control/TabContainer/Params/RaysPerPixel"]
-margin_left = 234.0
+margin_left = 264.0
 margin_top = 4.0
-margin_right = 250.0
+margin_right = 280.0
+margin_bottom = 18.0
+text = "32"
+align = 2
+
+[node name="HSeparator10" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
+margin_top = 26.0
+margin_right = 280.0
+margin_bottom = 30.0
+
+[node name="MaxRaymarchSteps" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
+margin_top = 34.0
+margin_right = 280.0
+margin_bottom = 56.0
+size_flags_horizontal = 3
+
+[node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/MaxRaymarchSteps"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 16 )
+
+[node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/MaxRaymarchSteps"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 155.0
+margin_bottom = 18.0
+text = "Max Raymarch Steps:"
+align = 2
+
+[node name="MaxRaymarchStepsSlider" type="HSlider" parent="Controls/Control/TabContainer/Params/MaxRaymarchSteps"]
+margin_left = 159.0
+margin_right = 260.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 128.0
+value = 32.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MaxRaymarchSteps" type="Label" parent="Controls/Control/TabContainer/Params/MaxRaymarchSteps"]
+margin_left = 264.0
+margin_top = 4.0
+margin_right = 280.0
 margin_bottom = 18.0
 text = "32"
 align = 2
 
 [node name="HSeparator" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
-margin_top = 26.0
-margin_right = 250.0
-margin_bottom = 30.0
+margin_top = 60.0
+margin_right = 280.0
+margin_bottom = 64.0
 
 [node name="DistanceMod" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
-margin_top = 34.0
-margin_right = 250.0
-margin_bottom = 56.0
+margin_top = 68.0
+margin_right = 280.0
+margin_bottom = 90.0
 size_flags_horizontal = 3
 
 [node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/DistanceMod"]
@@ -183,7 +228,7 @@ align = 2
 
 [node name="DistanceModSlider" type="HSlider" parent="Controls/Control/TabContainer/Params/DistanceMod"]
 margin_left = 116.0
-margin_right = 218.0
+margin_right = 248.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
 min_value = 1.0
@@ -195,22 +240,22 @@ __meta__ = {
 }
 
 [node name="DistanceMod" type="Label" parent="Controls/Control/TabContainer/Params/DistanceMod"]
-margin_left = 222.0
+margin_left = 252.0
 margin_top = 4.0
-margin_right = 250.0
+margin_right = 280.0
 margin_bottom = 18.0
 text = "10.0"
 align = 2
 
 [node name="HSeparator2" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
-margin_top = 60.0
-margin_right = 250.0
-margin_bottom = 64.0
+margin_top = 94.0
+margin_right = 280.0
+margin_bottom = 98.0
 
 [node name="EmissionMulti" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
-margin_top = 68.0
-margin_right = 250.0
-margin_bottom = 90.0
+margin_top = 102.0
+margin_right = 280.0
+margin_bottom = 124.0
 size_flags_horizontal = 3
 
 [node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/EmissionMulti"]
@@ -228,7 +273,7 @@ align = 2
 
 [node name="EmissionMultiSlider" type="HSlider" parent="Controls/Control/TabContainer/Params/EmissionMulti"]
 margin_left = 123.0
-margin_right = 226.0
+margin_right = 256.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
 min_value = 0.1
@@ -240,22 +285,22 @@ __meta__ = {
 }
 
 [node name="EmissionMulti" type="Label" parent="Controls/Control/TabContainer/Params/EmissionMulti"]
-margin_left = 230.0
+margin_left = 260.0
 margin_top = 4.0
-margin_right = 250.0
+margin_right = 280.0
 margin_bottom = 18.0
 text = "1.0"
 align = 2
 
 [node name="HSeparator3" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
-margin_top = 94.0
-margin_right = 250.0
-margin_bottom = 98.0
+margin_top = 128.0
+margin_right = 280.0
+margin_bottom = 132.0
 
 [node name="EmissionRange" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
-margin_top = 102.0
-margin_right = 250.0
-margin_bottom = 124.0
+margin_top = 136.0
+margin_right = 280.0
+margin_bottom = 158.0
 size_flags_horizontal = 3
 
 [node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/EmissionRange"]
@@ -273,7 +318,7 @@ align = 2
 
 [node name="EmissionRangeSlider" type="HSlider" parent="Controls/Control/TabContainer/Params/EmissionRange"]
 margin_left = 128.0
-margin_right = 226.0
+margin_right = 256.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
 min_value = 0.1
@@ -285,22 +330,22 @@ __meta__ = {
 }
 
 [node name="EmissionRange" type="Label" parent="Controls/Control/TabContainer/Params/EmissionRange"]
-margin_left = 230.0
+margin_left = 260.0
 margin_top = 4.0
-margin_right = 250.0
+margin_right = 280.0
 margin_bottom = 18.0
 text = "1.0"
 align = 2
 
 [node name="HSeparator4" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
-margin_top = 128.0
-margin_right = 250.0
-margin_bottom = 132.0
+margin_top = 162.0
+margin_right = 280.0
+margin_bottom = 166.0
 
 [node name="EmissionDropoff" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
-margin_top = 136.0
-margin_right = 250.0
-margin_bottom = 158.0
+margin_top = 170.0
+margin_right = 280.0
+margin_bottom = 192.0
 size_flags_horizontal = 3
 
 [node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/EmissionDropoff"]
@@ -318,7 +363,7 @@ align = 2
 
 [node name="EmissionDropoffSlider" type="HSlider" parent="Controls/Control/TabContainer/Params/EmissionDropoff"]
 margin_left = 142.0
-margin_right = 226.0
+margin_right = 256.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
 min_value = 0.1
@@ -330,22 +375,22 @@ __meta__ = {
 }
 
 [node name="EmissionDropoff" type="Label" parent="Controls/Control/TabContainer/Params/EmissionDropoff"]
-margin_left = 230.0
+margin_left = 260.0
 margin_top = 4.0
-margin_right = 250.0
+margin_right = 280.0
 margin_bottom = 18.0
 text = "1.0"
 align = 2
 
 [node name="HSeparator5" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
-margin_top = 162.0
-margin_right = 250.0
-margin_bottom = 166.0
+margin_top = 196.0
+margin_right = 280.0
+margin_bottom = 200.0
 
 [node name="LightBounce" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
-margin_top = 170.0
-margin_right = 250.0
-margin_bottom = 192.0
+margin_top = 204.0
+margin_right = 280.0
+margin_bottom = 226.0
 
 [node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/LightBounce"]
 margin_right = 16.0
@@ -362,7 +407,7 @@ align = 2
 
 [node name="Container" type="Container" parent="Controls/Control/TabContainer/Params/LightBounce"]
 margin_left = 111.0
-margin_right = 250.0
+margin_right = 280.0
 margin_bottom = 22.0
 size_flags_horizontal = 3
 
@@ -381,14 +426,14 @@ __meta__ = {
 }
 
 [node name="HSeparator6" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
-margin_top = 196.0
-margin_right = 250.0
-margin_bottom = 200.0
+margin_top = 230.0
+margin_right = 280.0
+margin_bottom = 234.0
 
 [node name="De-Noise" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
-margin_top = 204.0
-margin_right = 250.0
-margin_bottom = 226.0
+margin_top = 238.0
+margin_right = 280.0
+margin_bottom = 260.0
 
 [node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/De-Noise"]
 margin_right = 16.0
@@ -405,7 +450,7 @@ align = 2
 
 [node name="Container" type="Container" parent="Controls/Control/TabContainer/Params/De-Noise"]
 margin_left = 88.0
-margin_right = 250.0
+margin_right = 280.0
 margin_bottom = 22.0
 size_flags_horizontal = 3
 
@@ -421,14 +466,14 @@ __meta__ = {
 }
 
 [node name="HSeparator7" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
-margin_top = 230.0
-margin_right = 250.0
-margin_bottom = 234.0
+margin_top = 264.0
+margin_right = 280.0
+margin_bottom = 268.0
 
 [node name="Physics Freeze" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
-margin_top = 238.0
-margin_right = 250.0
-margin_bottom = 260.0
+margin_top = 272.0
+margin_right = 280.0
+margin_bottom = 294.0
 
 [node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/Physics Freeze"]
 margin_right = 16.0
@@ -445,7 +490,7 @@ align = 2
 
 [node name="Container" type="Container" parent="Controls/Control/TabContainer/Params/Physics Freeze"]
 margin_left = 123.0
-margin_right = 250.0
+margin_right = 280.0
 margin_bottom = 22.0
 size_flags_horizontal = 3
 
@@ -461,14 +506,14 @@ __meta__ = {
 }
 
 [node name="HSeparator8" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
-margin_top = 264.0
-margin_right = 250.0
-margin_bottom = 268.0
+margin_top = 298.0
+margin_right = 280.0
+margin_bottom = 302.0
 
 [node name="MouseSpawn" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
-margin_top = 272.0
-margin_right = 250.0
-margin_bottom = 294.0
+margin_top = 306.0
+margin_right = 280.0
+margin_bottom = 328.0
 
 [node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/MouseSpawn"]
 margin_right = 16.0
@@ -485,7 +530,7 @@ align = 2
 
 [node name="Container" type="Container" parent="Controls/Control/TabContainer/Params/MouseSpawn"]
 margin_left = 150.0
-margin_right = 250.0
+margin_right = 280.0
 margin_bottom = 22.0
 size_flags_horizontal = 3
 
@@ -501,14 +546,14 @@ __meta__ = {
 }
 
 [node name="HSeparator9" type="HSeparator" parent="Controls/Control/TabContainer/Params"]
-margin_top = 298.0
-margin_right = 250.0
-margin_bottom = 302.0
+margin_top = 332.0
+margin_right = 280.0
+margin_bottom = 336.0
 
 [node name="Walls" type="HBoxContainer" parent="Controls/Control/TabContainer/Params"]
-margin_top = 306.0
-margin_right = 250.0
-margin_bottom = 330.0
+margin_top = 340.0
+margin_right = 280.0
+margin_bottom = 364.0
 
 [node name="Info" type="Button" parent="Controls/Control/TabContainer/Params/Walls"]
 margin_right = 16.0
@@ -518,51 +563,51 @@ icon = ExtResource( 16 )
 [node name="Label" type="Label" parent="Controls/Control/TabContainer/Params/Walls"]
 margin_left = 20.0
 margin_top = 5.0
-margin_right = 128.0
+margin_right = 158.0
 margin_bottom = 19.0
 size_flags_horizontal = 3
 text = "Walls:"
 
 [node name="A" type="Label" parent="Controls/Control/TabContainer/Params/Walls"]
-margin_left = 132.0
+margin_left = 162.0
 margin_top = 5.0
-margin_right = 141.0
+margin_right = 171.0
 margin_bottom = 19.0
 text = "A"
 align = 2
 
 [node name="WallColourCheck" type="CheckBox" parent="Controls/Control/TabContainer/Params/Walls"]
-margin_left = 145.0
-margin_right = 169.0
+margin_left = 175.0
+margin_right = 199.0
 margin_bottom = 24.0
 pressed = true
 group = SubResource( 3 )
 
 [node name="B" type="Label" parent="Controls/Control/TabContainer/Params/Walls"]
-margin_left = 173.0
+margin_left = 203.0
 margin_top = 5.0
-margin_right = 182.0
+margin_right = 212.0
 margin_bottom = 19.0
 text = "B"
 align = 2
 
 [node name="WallWhiteCheck" type="CheckBox" parent="Controls/Control/TabContainer/Params/Walls"]
-margin_left = 186.0
-margin_right = 210.0
+margin_left = 216.0
+margin_right = 240.0
 margin_bottom = 24.0
 group = SubResource( 3 )
 
 [node name="C" type="Label" parent="Controls/Control/TabContainer/Params/Walls"]
-margin_left = 214.0
+margin_left = 244.0
 margin_top = 5.0
-margin_right = 222.0
+margin_right = 252.0
 margin_bottom = 19.0
 text = "C"
 align = 2
 
 [node name="WallBlackCheck" type="CheckBox" parent="Controls/Control/TabContainer/Params/Walls"]
-margin_left = 226.0
-margin_right = 250.0
+margin_left = 256.0
+margin_right = 280.0
 margin_bottom = 24.0
 group = SubResource( 3 )
 
@@ -960,6 +1005,9 @@ shape = SubResource( 8 )
 [connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/RaysPerPixel/Info" to="." method="_on_Info_mouse_entered" binds= [ 0 ]]
 [connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/RaysPerPixel/Info" to="." method="_on_Info_mouse_exited"]
 [connection signal="value_changed" from="Controls/Control/TabContainer/Params/RaysPerPixel/RaysPerPixelSlider" to="." method="_on_RaysPerPixelSlider_value_changed"]
+[connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/MaxRaymarchSteps/Info" to="." method="_on_Info_mouse_entered" binds= [ 10 ]]
+[connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/MaxRaymarchSteps/Info" to="." method="_on_Info_mouse_exited"]
+[connection signal="value_changed" from="Controls/Control/TabContainer/Params/MaxRaymarchSteps/MaxRaymarchStepsSlider" to="." method="_on_MaxRaymarchStepsSlider_value_changed"]
 [connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/DistanceMod/Info" to="." method="_on_Info_mouse_entered" binds= [ 1 ]]
 [connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/DistanceMod/Info" to="." method="_on_Info_mouse_exited"]
 [connection signal="value_changed" from="Controls/Control/TabContainer/Params/DistanceMod/DistanceModSlider" to="." method="_on_DistanceModSlider_value_changed"]

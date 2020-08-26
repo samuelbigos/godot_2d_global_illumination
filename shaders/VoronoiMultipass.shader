@@ -11,6 +11,7 @@ void fragment()
 	float closest_dist = 9999999.9;
 	vec2 closest_pos = vec2(0.0);
 	
+	// uses Jump Flood Algorithm to do a fast voronoi generation.
 	for(float x = -1.0; x <= 1.0; x += 1.0)
 	{
 		for(float y = -1.0; y <= 1.0; y += 1.0)
