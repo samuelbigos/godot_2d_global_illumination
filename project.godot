@@ -23,17 +23,11 @@ _global_script_classes=[ {
 "class": "RenderTarget",
 "language": "GDScript",
 "path": "res://src/RenderTarget.gd"
-}, {
-"base": "Viewport",
-"class": "VoronoiBuffer",
-"language": "GDScript",
-"path": "res://src/VoronoiBuffer.gd"
 } ]
 _global_script_class_icons={
 "Demo": "",
 "GI_Sprite": "",
-"RenderTarget": "",
-"VoronoiBuffer": ""
+"RenderTarget": ""
 }
 
 [application]

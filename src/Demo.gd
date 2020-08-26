@@ -22,7 +22,8 @@ var _walls = []
 
 """ PUBLIC """
 
-export var voronoi_buffer_scene : PackedScene = null
+export var rtt_scene : PackedScene = null
+export var voronoi_mat : Material = null
 export var ball_scene : PackedScene = null
 export var ball_frequency = 0.1
 
@@ -39,11 +40,10 @@ func _ready():
 	
 	$SceneBuffer.set_size(get_viewport().size)
 	
-	# viewport/RTT setup
 	_setup_voronoi_pipeline()
 	_setup_GI_pipeline()
 		
-	# output to screen
+	# set default screen output to the final global illumination texture
 	$Screen/Screen.rect_size = get_viewport().size
 	$Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $GI.get_texture())
 	
@@ -57,6 +57,9 @@ func _ready():
 	$SceneBuffer.add_child(_main_scene)
 	
 	# set correct render pass order
+	# we need to do this because we created the voronoi pass viewports after the others (which were created on scene load)
+	# which means they will be rendered after the others, which is no good
+	# disabling and activating viewports on the VisualServer wil set the correct order
 	VisualServer.viewport_set_active(GI.emissive_map.get_viewport_rid(), false)
 	VisualServer.viewport_set_active(GI.emissive_map.get_viewport_rid(), true)
 	VisualServer.viewport_set_active(GI.colour_map.get_viewport_rid(), false)
@@ -75,7 +78,7 @@ func _ready():
 	VisualServer.viewport_set_active($GI.get_viewport_rid(), false)
 	VisualServer.viewport_set_active($GI.get_viewport_rid(), true)
 	
-	# disable default viewport render
+	# disable default viewport render so we have the potential to update manually as an optimisation
 	GI.emissive_map.render_target_update_mode = Viewport.UPDATE_ONCE
 	GI.colour_map.render_target_update_mode = Viewport.UPDATE_ONCE
 	$SceneBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
@@ -86,7 +89,7 @@ func _ready():
 	$LastFrameBuffer.render_target_update_mode = Viewport.UPDATE_ONCE
 	$GI.render_target_update_mode = Viewport.UPDATE_ONCE
 	
-	# setup initial control options
+	# setup initial debug control options
 	_on_DistanceModSlider_value_changed(5.0)
 	_on_RaysPerPixelSlider_value_changed(32)
 	_on_EmissionMultiSlider_value_changed(1.5)
@@ -102,8 +105,7 @@ func _process(delta):
 	debug_blocking = debug_blocking or $Controls/Control/Minimise.get_global_rect().has_point(get_global_mouse_position())
 	debug_blocking = debug_blocking or $Controls/Control/Move.get_global_rect().has_point(get_global_mouse_position())
 	
-	var dirty = false
-	
+	# spawn balls and move light
 	_ball_timer -= delta
 	if Input.is_action_pressed("ui_click") and not debug_blocking:
 		if _mouse_spawn:			
@@ -119,17 +121,19 @@ func _process(delta):
 				_ball_timer = ball_frequency
 		else:
 			_light.position = get_global_mouse_position()
-			dirty = true
 				
 	$Screen/FPS.text = String(Engine.get_frames_per_second())
 	
+	# drag functionality of the debug menu.
 	if _moving_debug:
 		var mouse_delta = get_global_mouse_position() - _moving_debug_press_start
 		$Controls/Control.rect_position = _debug_init_pos + mouse_delta
 		if Input.is_action_just_released("ui_click"):
 			_moving_debug = false
 	
-	dirty = true
+	# currently unused, but this is so we could potentially not draw viewports if nothing has changed
+	# at the moment every viewport is set to UPDATE_ONCE every frame which is no different to UPDATE_ALWAYS
+	var dirty = true
 	if dirty:
 		GI.emissive_map.render_target_update_mode = Viewport.UPDATE_ONCE
 		GI.colour_map.render_target_update_mode = Viewport.UPDATE_ONCE
@@ -148,29 +152,39 @@ func _setup_voronoi_pipeline():
 	$VoronoiSeed/Texture.get_material().set_shader_param("u_input_tex", $SceneBuffer.get_texture())
 	$VoronoiSeed/Texture.rect_size = get_viewport().size
 	
+	# number of passes required is the log2 of the largest viewport dimension rounded up to the nearest power of 2
+	# i.e. 768x512 is log2(1024) == 10
 	var passes = ceil(log(max(get_viewport().size.x, get_viewport().size.y)) / log(2.0))
 	for i in range(0, passes):
+		# offset for each pass is half the previous one, starting at half the square resolution rounded up to nearest power 2
+		# i.e. for 768x512 we round up to 1024x1024 and the offset for the first pass is 512x512, then 256x256, etc 
 		var offset = pow(2, passes - i - 1)
-		var buffer = voronoi_buffer_scene.instance()
+		var buffer = rtt_scene.instance()
 		add_child(buffer)
 		_voronoi_buffers.append(buffer)
 		
+		# here we set the input texture for each pass, which is the previous pass, unless it's the first pass in which case it's
+		# the seed texture
 		var input_texture = $VoronoiSeed.get_texture()
 		if i > 0:
 			input_texture = _voronoi_buffers[i - 1].get_texture()
-			
-		buffer.setup(i, passes, offset, input_texture, get_viewport().size)
+		
+		buffer.set_size(get_viewport().size)
+		buffer.set_material(voronoi_mat.duplicate())
+		buffer.set_shader_param("u_level", i)
+		buffer.set_shader_param("u_max_steps", passes)
+		buffer.set_shader_param("u_offset", offset)
+		buffer.set_shader_param("u_tex", input_texture)
 	
-	# distance field
+	# setup the distance field size and input (which is the final voronoi pass)
 	$DistanceField.set_size(get_viewport().size)
-	$DistanceField/Texture.rect_size = get_viewport().size
-	
+	$DistanceField/Texture.rect_size = get_viewport().size	
 	$DistanceField/Texture.get_material().set_shader_param("u_input_tex", _voronoi_buffers[passes - 1].get_texture())
 	$DistanceField/Texture.get_material().set_shader_param("u_dist_mod", 10.0)
 	
 func _setup_GI_pipeline():
 
-	# GI	
+	# set up GI material size and uniforms
 	$LastFrameBuffer.set_size(get_viewport().size)
 	$LastFrameBuffer.set_shader_param("u_texture_to_draw", $GI.get_texture())
 	
@@ -183,6 +197,9 @@ func _setup_GI_pipeline():
 	$GI.set_shader_param("u_dist_mod", 10.0)
 	$GI.set_shader_param("u_rays_per_pixel", 32)
 
+#
+# This is all debug menu signal handling
+#
 func _on_Final_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $GI.get_texture())
 func _on_Scene_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", $SceneBuffer.get_texture())
 func _on_Colour_pressed(): $Screen/Screen.get_material().set_shader_param("u_texture_to_draw", GI.colour_map.get_texture())
@@ -273,9 +290,9 @@ func _on_WallColourCheck_toggled(button_pressed):
 	_walls[2].set_colour(Color.teal)
 
 func _on_WallWhiteCheck_toggled(button_pressed):
-	_walls[0].set_colour(Color(0.5, 0.5, 0.5, 1.0))
-	_walls[1].set_colour(Color(0.5, 0.5, 0.5, 1.0))
-	_walls[2].set_colour(Color(0.5, 0.5, 0.5, 1.0))
+	_walls[0].set_colour(Color(1.0, 1.0, 1.0, 1.0))
+	_walls[1].set_colour(Color(1.0, 1.0, 1.0, 1.0))
+	_walls[2].set_colour(Color(1.0, 1.0, 1.0, 1.0))
 
 func _on_WallBlackCheck_toggled(button_pressed):
 	_walls[0].set_colour(Color.black)
