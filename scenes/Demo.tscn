@@ -89,10 +89,10 @@ __meta__ = {
 [node name="Controls" type="CanvasLayer" parent="."]
 
 [node name="Control" type="Control" parent="Controls"]
-margin_left = 456.0
-margin_top = 24.0
-margin_right = 496.0
-margin_bottom = 64.0
+margin_left = 632.0
+margin_top = 32.0
+margin_right = 672.0
+margin_bottom = 72.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -755,8 +755,8 @@ texture = ExtResource( 12 )
 texture = ExtResource( 12 )
 
 [node name="Top" type="Sprite" parent="MainScene"]
-position = Vector2( 383.279, 0 )
-scale = Vector2( 783.531, 16 )
+position = Vector2( 477.88, 0 )
+scale = Vector2( 972.733, 16 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -777,8 +777,8 @@ texture = ExtResource( 11 )
 shape = SubResource( 8 )
 
 [node name="Bottom" type="Sprite" parent="MainScene"]
-position = Vector2( 385.636, 510.561 )
-scale = Vector2( 545.248, 16 )
+position = Vector2( 484.021, 510.561 )
+scale = Vector2( 742.018, 16 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -799,8 +799,8 @@ texture = ExtResource( 11 )
 shape = SubResource( 8 )
 
 [node name="Left" type="Sprite" parent="MainScene"]
-position = Vector2( 0, 256 )
-scale = Vector2( 16, 512 )
+position = Vector2( 0, 270.716 )
+scale = Vector2( 16, 541.431 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -821,8 +821,8 @@ texture = ExtResource( 11 )
 shape = SubResource( 8 )
 
 [node name="Right" type="Sprite" parent="MainScene"]
-position = Vector2( 768, 256 )
-scale = Vector2( 16, 512 )
+position = Vector2( 960, 269.716 )
+scale = Vector2( 16, 541.431 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -843,9 +843,9 @@ texture = ExtResource( 11 )
 shape = SubResource( 8 )
 
 [node name="Slope1" type="Sprite" parent="MainScene"]
-position = Vector2( 168.099, 127.583 )
+position = Vector2( 171.501, 124.923 )
 rotation = 0.275176
-scale = Vector2( 341.257, 9.16205 )
+scale = Vector2( 358.813, 9.16205 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -866,9 +866,9 @@ texture = ExtResource( 11 )
 shape = SubResource( 8 )
 
 [node name="Slope3" type="Sprite" parent="MainScene"]
-position = Vector2( 535.764, 126.236 )
+position = Vector2( 574.668, 120.963 )
 rotation = 0.148636
-scale = Vector2( 210.748, 9.16205 )
+scale = Vector2( 275.819, 9.16205 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -889,9 +889,9 @@ texture = ExtResource( 11 )
 shape = SubResource( 8 )
 
 [node name="Slope2" type="Sprite" parent="MainScene"]
-position = Vector2( 632.996, 209.048 )
+position = Vector2( 706.09, 225.548 )
 rotation = -0.19827
-scale = Vector2( 279.914, 9.16205 )
+scale = Vector2( 293.767, 9.16205 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -935,9 +935,9 @@ texture = ExtResource( 11 )
 shape = SubResource( 8 )
 
 [node name="Slope6" type="Sprite" parent="MainScene"]
-position = Vector2( 424.563, 374.436 )
+position = Vector2( 473.866, 371.023 )
 rotation = 2.85222
-scale = Vector2( 144.806, 9.16205 )
+scale = Vector2( 168.726, 9.16205 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -958,9 +958,9 @@ texture = ExtResource( 11 )
 shape = SubResource( 8 )
 
 [node name="Slope8" type="Sprite" parent="MainScene"]
-position = Vector2( 618.563, 387.436 )
+position = Vector2( 760.5, 382.543 )
 rotation = 3.48523
-scale = Vector2( 144.806, 9.16205 )
+scale = Vector2( 223.77, 9.16205 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -981,9 +981,9 @@ texture = ExtResource( 11 )
 shape = SubResource( 8 )
 
 [node name="Slope7" type="Sprite" parent="MainScene"]
-position = Vector2( 152.559, 397.125 )
+position = Vector2( 159.709, 398.795 )
 rotation = 3.37109
-scale = Vector2( 305.057, 9.16205 )
+scale = Vector2( 319.743, 9.16205 )
 texture = ExtResource( 11 )
 script = ExtResource( 6 )
 __meta__ = {
@@ -1002,6 +1002,7 @@ texture = ExtResource( 11 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MainScene/Slope7/StaticBody2D"]
 shape = SubResource( 8 )
+
 [connection signal="mouse_entered" from="Controls/Control/TabContainer/Params/RaysPerPixel/Info" to="." method="_on_Info_mouse_entered" binds= [ 0 ]]
 [connection signal="mouse_exited" from="Controls/Control/TabContainer/Params/RaysPerPixel/Info" to="." method="_on_Info_mouse_exited"]
 [connection signal="value_changed" from="Controls/Control/TabContainer/Params/RaysPerPixel/RaysPerPixelSlider" to="." method="_on_RaysPerPixelSlider_value_changed"]

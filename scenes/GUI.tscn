@@ -1,0 +1,609 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/min.png" type="Texture" id=1]
+[ext_resource path="res://assets/info.png" type="Texture" id=2]
+[ext_resource path="res://assets/move.png" type="Texture" id=3]
+
+[sub_resource type="ButtonGroup" id=1]
+
+[node name="Control" type="Control"]
+margin_left = 456.0
+margin_top = 24.0
+margin_right = 496.0
+margin_bottom = 64.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TabContainer" type="TabContainer" parent="."]
+margin_right = 258.0
+margin_bottom = 268.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tab_align = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Params" type="VBoxContainer" parent="TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+rect_min_size = Vector2( 280, 0 )
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RaysPerPixel" type="HBoxContainer" parent="TabContainer/Params"]
+margin_right = 280.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+
+[node name="Info" type="Button" parent="TabContainer/Params/RaysPerPixel"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="TabContainer/Params/RaysPerPixel"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 113.0
+margin_bottom = 18.0
+text = "Rays Per Pixel:"
+align = 2
+
+[node name="RaysPerPixelSlider" type="HSlider" parent="TabContainer/Params/RaysPerPixel"]
+margin_left = 117.0
+margin_right = 260.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 128.0
+value = 32.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="RaysPerPixel" type="Label" parent="TabContainer/Params/RaysPerPixel"]
+margin_left = 264.0
+margin_top = 4.0
+margin_right = 280.0
+margin_bottom = 18.0
+text = "32"
+align = 2
+
+[node name="HSeparator10" type="HSeparator" parent="TabContainer/Params"]
+margin_top = 26.0
+margin_right = 280.0
+margin_bottom = 30.0
+
+[node name="MaxRaymarchSteps" type="HBoxContainer" parent="TabContainer/Params"]
+margin_top = 34.0
+margin_right = 280.0
+margin_bottom = 56.0
+size_flags_horizontal = 3
+
+[node name="Info" type="Button" parent="TabContainer/Params/MaxRaymarchSteps"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="TabContainer/Params/MaxRaymarchSteps"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 155.0
+margin_bottom = 18.0
+text = "Max Raymarch Steps:"
+align = 2
+
+[node name="MaxRaymarchStepsSlider" type="HSlider" parent="TabContainer/Params/MaxRaymarchSteps"]
+margin_left = 159.0
+margin_right = 260.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 128.0
+value = 32.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MaxRaymarchSteps" type="Label" parent="TabContainer/Params/MaxRaymarchSteps"]
+margin_left = 264.0
+margin_top = 4.0
+margin_right = 280.0
+margin_bottom = 18.0
+text = "32"
+align = 2
+
+[node name="HSeparator" type="HSeparator" parent="TabContainer/Params"]
+margin_top = 60.0
+margin_right = 280.0
+margin_bottom = 64.0
+
+[node name="DistanceMod" type="HBoxContainer" parent="TabContainer/Params"]
+margin_top = 68.0
+margin_right = 280.0
+margin_bottom = 90.0
+size_flags_horizontal = 3
+
+[node name="Info" type="Button" parent="TabContainer/Params/DistanceMod"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="TabContainer/Params/DistanceMod"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 112.0
+margin_bottom = 18.0
+text = "Distance Mod:"
+align = 2
+
+[node name="DistanceModSlider" type="HSlider" parent="TabContainer/Params/DistanceMod"]
+margin_left = 116.0
+margin_right = 248.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 50.0
+step = 0.01
+value = 10.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DistanceMod" type="Label" parent="TabContainer/Params/DistanceMod"]
+margin_left = 252.0
+margin_top = 4.0
+margin_right = 280.0
+margin_bottom = 18.0
+text = "10.0"
+align = 2
+
+[node name="HSeparator2" type="HSeparator" parent="TabContainer/Params"]
+margin_top = 94.0
+margin_right = 280.0
+margin_bottom = 98.0
+
+[node name="EmissionMulti" type="HBoxContainer" parent="TabContainer/Params"]
+margin_top = 102.0
+margin_right = 280.0
+margin_bottom = 124.0
+size_flags_horizontal = 3
+
+[node name="Info" type="Button" parent="TabContainer/Params/EmissionMulti"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="TabContainer/Params/EmissionMulti"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 119.0
+margin_bottom = 18.0
+text = "Emission Multi:"
+align = 2
+
+[node name="EmissionMultiSlider" type="HSlider" parent="TabContainer/Params/EmissionMulti"]
+margin_left = 123.0
+margin_right = 256.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = 0.1
+max_value = 5.0
+step = 0.1
+value = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EmissionMulti" type="Label" parent="TabContainer/Params/EmissionMulti"]
+margin_left = 260.0
+margin_top = 4.0
+margin_right = 280.0
+margin_bottom = 18.0
+text = "1.0"
+align = 2
+
+[node name="HSeparator3" type="HSeparator" parent="TabContainer/Params"]
+margin_top = 128.0
+margin_right = 280.0
+margin_bottom = 132.0
+
+[node name="EmissionRange" type="HBoxContainer" parent="TabContainer/Params"]
+margin_top = 136.0
+margin_right = 280.0
+margin_bottom = 158.0
+size_flags_horizontal = 3
+
+[node name="Info" type="Button" parent="TabContainer/Params/EmissionRange"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="TabContainer/Params/EmissionRange"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 124.0
+margin_bottom = 18.0
+text = "Emission Range:"
+align = 2
+
+[node name="EmissionRangeSlider" type="HSlider" parent="TabContainer/Params/EmissionRange"]
+margin_left = 128.0
+margin_right = 256.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = 0.1
+max_value = 10.0
+step = 0.1
+value = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EmissionRange" type="Label" parent="TabContainer/Params/EmissionRange"]
+margin_left = 260.0
+margin_top = 4.0
+margin_right = 280.0
+margin_bottom = 18.0
+text = "1.0"
+align = 2
+
+[node name="HSeparator4" type="HSeparator" parent="TabContainer/Params"]
+margin_top = 162.0
+margin_right = 280.0
+margin_bottom = 166.0
+
+[node name="EmissionDropoff" type="HBoxContainer" parent="TabContainer/Params"]
+margin_top = 170.0
+margin_right = 280.0
+margin_bottom = 192.0
+size_flags_horizontal = 3
+
+[node name="Info" type="Button" parent="TabContainer/Params/EmissionDropoff"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="TabContainer/Params/EmissionDropoff"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 138.0
+margin_bottom = 18.0
+text = "Emission Drop-off:"
+align = 2
+
+[node name="EmissionDropoffSlider" type="HSlider" parent="TabContainer/Params/EmissionDropoff"]
+margin_left = 142.0
+margin_right = 256.0
+margin_bottom = 16.0
+size_flags_horizontal = 3
+min_value = 0.1
+max_value = 5.0
+step = 0.1
+value = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EmissionDropoff" type="Label" parent="TabContainer/Params/EmissionDropoff"]
+margin_left = 260.0
+margin_top = 4.0
+margin_right = 280.0
+margin_bottom = 18.0
+text = "1.0"
+align = 2
+
+[node name="HSeparator5" type="HSeparator" parent="TabContainer/Params"]
+margin_top = 196.0
+margin_right = 280.0
+margin_bottom = 200.0
+
+[node name="LightBounce" type="HBoxContainer" parent="TabContainer/Params"]
+margin_top = 204.0
+margin_right = 280.0
+margin_bottom = 226.0
+
+[node name="Info" type="Button" parent="TabContainer/Params/LightBounce"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="TabContainer/Params/LightBounce"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 107.0
+margin_bottom = 18.0
+text = "Light Bounce:"
+align = 2
+
+[node name="Container" type="Container" parent="TabContainer/Params/LightBounce"]
+margin_left = 111.0
+margin_right = 280.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+
+[node name="LightBounceButton" type="CheckButton" parent="TabContainer/Params/LightBounce/Container"]
+anchor_right = 1.0
+margin_top = -13.0
+margin_bottom = 27.0
+focus_mode = 0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+pressed = true
+enabled_focus_mode = 0
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSeparator6" type="HSeparator" parent="TabContainer/Params"]
+margin_top = 230.0
+margin_right = 280.0
+margin_bottom = 234.0
+
+[node name="De-Noise" type="HBoxContainer" parent="TabContainer/Params"]
+margin_top = 238.0
+margin_right = 280.0
+margin_bottom = 260.0
+
+[node name="Info" type="Button" parent="TabContainer/Params/De-Noise"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="TabContainer/Params/De-Noise"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 84.0
+margin_bottom = 18.0
+text = "De-Noise:"
+align = 2
+
+[node name="Container" type="Container" parent="TabContainer/Params/De-Noise"]
+margin_left = 88.0
+margin_right = 280.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+
+[node name="DeNoiseButton" type="CheckButton" parent="TabContainer/Params/De-Noise/Container"]
+anchor_right = 1.0
+margin_top = -13.0
+focus_mode = 0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+enabled_focus_mode = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSeparator7" type="HSeparator" parent="TabContainer/Params"]
+margin_top = 264.0
+margin_right = 280.0
+margin_bottom = 268.0
+
+[node name="Physics Freeze" type="HBoxContainer" parent="TabContainer/Params"]
+margin_top = 272.0
+margin_right = 280.0
+margin_bottom = 294.0
+
+[node name="Info" type="Button" parent="TabContainer/Params/Physics Freeze"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="TabContainer/Params/Physics Freeze"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 119.0
+margin_bottom = 18.0
+text = "Physics Freeze:"
+align = 2
+
+[node name="Container" type="Container" parent="TabContainer/Params/Physics Freeze"]
+margin_left = 123.0
+margin_right = 280.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+
+[node name="FreezeButton" type="CheckButton" parent="TabContainer/Params/Physics Freeze/Container"]
+anchor_right = 1.0
+margin_top = -13.0
+focus_mode = 0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+enabled_focus_mode = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSeparator8" type="HSeparator" parent="TabContainer/Params"]
+margin_top = 298.0
+margin_right = 280.0
+margin_bottom = 302.0
+
+[node name="MouseSpawn" type="HBoxContainer" parent="TabContainer/Params"]
+margin_top = 306.0
+margin_right = 280.0
+margin_bottom = 328.0
+
+[node name="Info" type="Button" parent="TabContainer/Params/MouseSpawn"]
+margin_right = 16.0
+margin_bottom = 22.0
+icon = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="TabContainer/Params/MouseSpawn"]
+margin_left = 20.0
+margin_top = 4.0
+margin_right = 146.0
+margin_bottom = 18.0
+text = "Mouse Spawn Balls:"
+align = 2
+
+[node name="Container" type="Container" parent="TabContainer/Params/MouseSpawn"]
+margin_left = 150.0
+margin_right = 280.0
+margin_bottom = 22.0
+size_flags_horizontal = 3
+
+[node name="MouseSpawnButton" type="CheckButton" parent="TabContainer/Params/MouseSpawn/Container"]
+anchor_right = 1.0
+margin_top = -13.0
+focus_mode = 0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+enabled_focus_mode = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HSeparator9" type="HSeparator" parent="TabContainer/Params"]
+margin_top = 332.0
+margin_right = 280.0
+margin_bottom = 336.0
+
+[node name="Walls" type="HBoxContainer" parent="TabContainer/Params"]
+margin_top = 340.0
+margin_right = 280.0
+margin_bottom = 364.0
+
+[node name="Info" type="Button" parent="TabContainer/Params/Walls"]
+margin_right = 16.0
+margin_bottom = 24.0
+icon = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="TabContainer/Params/Walls"]
+margin_left = 20.0
+margin_top = 5.0
+margin_right = 158.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+text = "Walls:"
+
+[node name="A" type="Label" parent="TabContainer/Params/Walls"]
+margin_left = 162.0
+margin_top = 5.0
+margin_right = 171.0
+margin_bottom = 19.0
+text = "A"
+align = 2
+
+[node name="WallColourCheck" type="CheckBox" parent="TabContainer/Params/Walls"]
+margin_left = 175.0
+margin_right = 199.0
+margin_bottom = 24.0
+pressed = true
+group = SubResource( 1 )
+
+[node name="B" type="Label" parent="TabContainer/Params/Walls"]
+margin_left = 203.0
+margin_top = 5.0
+margin_right = 212.0
+margin_bottom = 19.0
+text = "B"
+align = 2
+
+[node name="WallWhiteCheck" type="CheckBox" parent="TabContainer/Params/Walls"]
+margin_left = 216.0
+margin_right = 240.0
+margin_bottom = 24.0
+group = SubResource( 1 )
+
+[node name="C" type="Label" parent="TabContainer/Params/Walls"]
+margin_left = 244.0
+margin_top = 5.0
+margin_right = 252.0
+margin_bottom = 19.0
+text = "C"
+align = 2
+
+[node name="WallBlackCheck" type="CheckBox" parent="TabContainer/Params/Walls"]
+margin_left = 256.0
+margin_right = 280.0
+margin_bottom = 24.0
+group = SubResource( 1 )
+
+[node name="RTTs" type="VBoxContainer" parent="TabContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GridContainer" type="GridContainer" parent="TabContainer/RTTs"]
+margin_right = 254.0
+margin_bottom = 116.0
+
+[node name="Final" type="Button" parent="TabContainer/RTTs/GridContainer"]
+margin_right = 96.0
+margin_bottom = 20.0
+text = "Final"
+
+[node name="Scene" type="Button" parent="TabContainer/RTTs/GridContainer"]
+margin_left = 100.0
+margin_right = 175.0
+margin_bottom = 20.0
+text = "Scene"
+
+[node name="Colour" type="Button" parent="TabContainer/RTTs/GridContainer"]
+margin_left = 100.0
+margin_right = 175.0
+margin_bottom = 20.0
+text = "Colour"
+
+[node name="Emissive" type="Button" parent="TabContainer/RTTs/GridContainer"]
+margin_left = 179.0
+margin_right = 254.0
+margin_bottom = 20.0
+text = "Emissive"
+
+[node name="VoronoiSeed" type="Button" parent="TabContainer/RTTs/GridContainer"]
+margin_top = 24.0
+margin_right = 96.0
+margin_bottom = 44.0
+text = "Voronoi Seed"
+
+[node name="Voronoi" type="Button" parent="TabContainer/RTTs/GridContainer"]
+margin_left = 100.0
+margin_top = 24.0
+margin_right = 175.0
+margin_bottom = 44.0
+text = "Voronoi"
+
+[node name="DistanceField" type="Button" parent="TabContainer/RTTs/GridContainer"]
+margin_left = 100.0
+margin_top = 96.0
+margin_right = 175.0
+margin_bottom = 116.0
+text = "Dist-Field"
+
+[node name="Minimise" type="Button" parent="."]
+margin_left = 231.0
+margin_top = -1.0
+margin_right = 259.0
+margin_bottom = 21.0
+icon = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Move" type="Button" parent="."]
+margin_left = 199.0
+margin_top = -1.0
+margin_right = 227.0
+margin_bottom = 21.0
+icon = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

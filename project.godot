@@ -42,10 +42,10 @@ GI="*res://scenes/GI.tscn"
 
 [display]
 
-window/size/width=768
-window/size/height=512
-window/size/test_width=768
-window/size/test_height=512
+window/size/width=960
+window/size/height=540
+window/size/test_width=960
+window/size/test_height=540
 window/vsync/use_vsync=false
 window/stretch/mode="viewport"
 window/stretch/aspect="keep"
